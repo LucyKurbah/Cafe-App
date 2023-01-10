@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'button_bar.dart';
 
 class MenuItems extends StatefulWidget {
   const MenuItems({super.key});
@@ -88,7 +89,8 @@ class _MenuItemsState extends State<MenuItems>  with SingleTickerProviderStateMi
           backgroundColor: Color(0xFF17532),
           child: Icon(Icons.fastfood),
           ),
-          floatingActionButtonLocation: FloatingActionButton.centerTitle,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: BottomBar(),
     );
   }
 }

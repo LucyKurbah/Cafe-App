@@ -30,7 +30,22 @@ class BottomBar extends StatelessWidget {
               height: 50.0,
               width: MediaQuery.of(context).size.width/2 * 40.0,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(Icons.home, color: Color(0xFFEF7532),),
+                    Icon(Icons.person_outline, color: Color(0xFF676E79),)
+                ],
+              ),
+            ),
+            Container(
+              height: 50.0,
+              width: MediaQuery.of(context).size.width/2 * 40.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(Icons.search, color: Color(0xFFEF7532),),
+                    Icon(Icons.shopping_basket, color: Color(0xFF676E79),)
+                ],
               ),
             )
         ]),
