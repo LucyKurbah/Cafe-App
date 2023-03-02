@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -12,22 +13,23 @@ Future<ApiResponse> login(String email, String password) async {
   
   ApiResponse apiResponse = ApiResponse();
   try {
-    
-   
     final response = await http.post(
             Uri.parse(ApiConstants.loginUrl),
             headers: {'Accept': 'application/json',
                       'Content-type': 'application/json'
                       },
             body: jsonEncode({"email": email, "password": password}),
-    );
-    print(response.statusCode);
+            )
+            .timeout(const Duration(seconds: 15), onTimeout: () {
+              throw TimeoutException("Connection Time Out. Try Again!");
+            },);
+
     switch(response.statusCode)
     {
       case 200:
-        print(response.body.toString());
-        apiResponse.data =  UserModel.fromJson(jsonDecode(response.body));
        
+        apiResponse.data =  UserModel.fromJson(jsonDecode(response.body));
+        
         break;
       case 422:
         final errors = jsonDecode(response.body)['errors'];
@@ -93,11 +95,12 @@ Future<ApiResponse> getUserDetails() async {
         'Accept':'application/json',
         'Authorization' : 'Bearer $token'
         });
-      
+
     switch(response.statusCode)
     {
-      case 200:
+      case 200:   
         apiResponse.data =  UserModel.fromJson(jsonDecode(response.body));
+      
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;
@@ -115,7 +118,8 @@ Future<ApiResponse> getUserDetails() async {
 
 Future<String> getToken() async{
   SharedPreferences pref = await SharedPreferences.getInstance();
-  return pref.getString('') ?? '';
+  return pref.getString('token') ?? '';
+
 }
 
 Future<int> getUserId() async{
@@ -123,9 +127,11 @@ Future<int> getUserId() async{
   return pref.getInt('userId') ?? 0;
 }
 
-Future<bool> logout() async{
+void logoutUser() async{
   SharedPreferences pref = await SharedPreferences.getInstance();
-  return await pref.remove('token');
+   pref.remove('userId');
+   pref.remove('token');
+   
 }
 
 String? getStringImage(File? file){

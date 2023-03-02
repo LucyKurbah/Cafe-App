@@ -13,11 +13,11 @@ Future<ApiResponse> getProducts() async{
   
   ApiResponse apiResponse = ApiResponse();
   try {
-    String token = await getToken();
+    // String token = await getToken();
     final response = await http.post(Uri.parse(ApiConstants.itemUrl),
                 headers: {
                     'Accept' : 'application/json',
-                    'Authorization' : 'Bearer $token'
+                    // 'Authorization' : 'Bearer $token'
                 },
                );
     switch(response.statusCode)

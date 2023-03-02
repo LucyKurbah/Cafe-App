@@ -1,4 +1,4 @@
-import 'package:cafe_app/controllers/cart_controller.dart';
+
 import 'package:cafe_app/screens/home/components/cart_card.dart';
 import 'package:flutter/material.dart';
 import 'home.dart';
@@ -7,8 +7,8 @@ import 'package:cafe_app/api/apiFile.dart';
 import 'package:cafe_app/services/user_service.dart';
 import 'package:cafe_app/services/cart_service.dart';
 import 'package:cafe_app/screens/login.dart';
-import '../models/Product.dart';
 import '../models/Cart.dart';
+import 'package:get/get.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -22,7 +22,10 @@ class _CartScreenState extends State<CartScreen> {
   int userId = 0;
   bool _loading = true;
   String _cartMessage = '';
-  List<dynamic> _cartList = [];
+  List<dynamic> _cartList = [].obs;
+  List<dynamic> _totalPrice = [].obs;
+  // RxDouble _totalCartAmount = 0.00.obs;
+
 
 
   // final CartController cartController = CartController();
@@ -120,6 +123,7 @@ class _CartScreenState extends State<CartScreen> {
     // TODO: implement initState
     super.initState();
     retrieveCart();
+   
   }
 
   
@@ -134,24 +138,51 @@ class _CartScreenState extends State<CartScreen> {
       setState(() {
         _cartList = response.data as List<dynamic>;
 
-        print(response.data);
-
         _loading = _loading ? !_loading : _loading;
+        //retrieveTotal();
       });
     }
     else if(response.error == ApiConstants.unauthorized){
 
-      logout().then((value) => {
+      logoutUser();
              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
                                                       builder: (context) => Login()
                                                                 ), 
-                                                (route) => false)
-      });
+                                                (route) => false);
+     
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
     }
   }
+
+  // Future<void> retrieveTotal() async{
+  //   userId = await getUserId();
+    
+  //   ApiResponse response = await getTotal();
+    
+  //   if(response.error == null)
+  //   {
+     
+  //     setState(() {
+  //       _totalPrice = response.data as List<dynamic>;
+
+  //       // _totalCartAmount = _totalPrice[0]['totalprice'];
+  //     });
+  //   }
+  //   else if(response.error == ApiConstants.unauthorized){
+
+  //     logoutUser().then((value) => {
+  //            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+  //                                                     builder: (context) => Login()
+  //                                                               ), 
+  //                                               (route) => false)
+  //     });
+  //   }
+  //   else{
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+  //   }
+  // }
 
 
   Future<void> addCart(Cart cart) async{
@@ -160,17 +191,18 @@ class _CartScreenState extends State<CartScreen> {
     ApiResponse response = await incrementCart(cart);
     if(response.error == null)
     {
+        retrieveCart();
         _cartMessage = response.data.toString();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
         _loading = _loading ? !_loading : _loading;
     }
     else if(response.error == ApiConstants.unauthorized){
-      logout().then((value) => {
+      logoutUser();
              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
                                                       builder: (context) => Login()
                                                                 ), 
-                                                (route) => false)
-      });
+                                                (route) => false);
+      
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
@@ -184,17 +216,18 @@ class _CartScreenState extends State<CartScreen> {
     ApiResponse response = await decrementCart(cart);
     if(response.error == null)
     {
+         retrieveCart();
         _cartMessage = response.data.toString();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
         _loading = _loading ? !_loading : _loading;
     }
     else if(response.error == ApiConstants.unauthorized){
-      logout().then((value) => {
+      logoutUser();
              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
                                                       builder: (context) => Login()
                                                                 ), 
-                                                (route) => false)
-      });
+                                                (route) => false);
+     
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
@@ -212,18 +245,12 @@ class _CartScreenState extends State<CartScreen> {
         children: [
             Container(),
             Positioned(
-              
-              child: GridView.builder(
-                gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 1,
-                                      childAspectRatio: 0.8,
-                                      mainAxisSpacing: 10,
-                                      crossAxisSpacing: 10,
-                                    ),
+           
+              child: ListView.builder(
                 itemCount: _cartList.length,
                 shrinkWrap: true,
                 padding: EdgeInsets.all(16),
+                
                 itemBuilder: ((context, index) => 
                    CartCard(
                       cart: _cartList[index], 
@@ -234,7 +261,7 @@ class _CartScreenState extends State<CartScreen> {
                           removeCart(_cartList[index]);
 
                       })
-                ), 
+                ),
                )
             ),
             _buildBottom(),

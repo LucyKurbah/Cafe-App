@@ -1,3 +1,4 @@
+import 'package:cafe_app/screens/single_table_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -5,10 +6,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cafe_app/screens/menu.dart';
 import 'package:provider/provider.dart';
 import 'controllers/home_controller.dart';
-import 'screens/table_card.dart';
+import 'screens/table_page.dart';
 import 'screens/cartscreen.dart';
 import 'screens/conference_screen.dart';
 import 'screens/loading.dart';
+import 'package:get/get.dart';
+import 'screens/login.dart';
+import 'screens/register.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', //id
@@ -82,21 +86,23 @@ class _MyAppState extends State<MyApp> {
      return ChangeNotifierProvider(
       create: (_) =>HomeController(),
       child: Builder(builder: (BuildContext context) {
-        return MaterialApp(
+        return GetMaterialApp(
+          
                       title: 'Cafe App',
                       // theme: ThemeData.dark(),
                       
                       home: const Loading(),
                       routes: {
-                          '/table': (context) => TableCard(),
+                          '/table': (context) => TablePage(),
                           '/conference': (context) => ConferenceScreen(),
                           '/coffee': (context) => MenuPage(),
-                          '/floor': (context) => TableCard(),
+                          '/floor': (context) => TablePage(),
                           '/cart': (context) => CartScreen(),
                           '/checkout': (context) => CartScreen(),
                           '/profile': (context) => CartScreen(),
-                          '/login': (context) => CartScreen(),
-                          '/signup': (context) => CartScreen(),
+                          '/login': (context) => Login(),
+                          '/signup': (context) => Register(),
+                        
                       
                       },
                     );

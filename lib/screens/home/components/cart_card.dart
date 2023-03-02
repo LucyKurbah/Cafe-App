@@ -6,6 +6,7 @@ import 'package:cafe_app/services/cart_service.dart';
 import 'package:cafe_app/services/api_response.dart';
 import 'package:cafe_app/api/apiFile.dart';
 import 'package:cafe_app/screens/login.dart';
+import 'package:get/get.dart';
 
 class CartCard extends StatelessWidget {
 
@@ -20,8 +21,6 @@ class CartCard extends StatelessWidget {
 
   final VoidCallback addItem, removeItem;
   
-
-
   @override
   Widget build(BuildContext context) {
    
@@ -69,7 +68,7 @@ class CartCard extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       GestureDetector(
-                                        child: Icon(Icons.delete, color: Colors.white,),
+                                        child: Icon(Icons.delete_rounded, color: Colors.white,),
                                         onTap:removeItem
                                       ),
                                       Text("${cart.quantity}",
@@ -78,10 +77,12 @@ class CartCard extends StatelessWidget {
                                           color: Colors.white
                                         ),
                                       ),
+                                      
                                        GestureDetector(
                                         child: Icon(Icons.add, color: Colors.white),
                                         onTap: addItem,
                                       ),
+                                      
                                     ],
                                   ),
                                 )

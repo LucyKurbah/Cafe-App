@@ -2,9 +2,9 @@ import 'package:badges/badges.dart';
 import 'package:cafe_app/controllers/home_controller.dart';
 import 'package:cafe_app/db/db_helper.dart';
 import 'package:cafe_app/screens/home/components/product_card.dart';
+import 'package:cafe_app/screens/home/components/table_card.dart';
 import 'package:cafe_app/screens/login.dart';
-import 'package:cafe_app/screens/home.dart';
-import 'package:cafe_app/services/product_service.dart';
+import 'package:cafe_app/services/table_service.dart';
 import 'package:cafe_app/services/cart_service.dart';
 import 'package:cafe_app/services/user_service.dart';
 import 'package:flutter/material.dart';
@@ -16,24 +16,25 @@ import 'home/components/cart_short_view.dart';
 import 'package:cafe_app/api/apiFile.dart';
 import 'package:cafe_app/models/Product.dart';
 import 'package:cafe_app/screens/cartscreen.dart';
+import 'package:cafe_app/screens/single_table_screen.dart';
 import 'package:get/get.dart';
 
 
-class MenuPage extends StatefulWidget {
-  const MenuPage({super.key});
+class TablePage extends StatefulWidget {
+  const TablePage({super.key});
 
   @override
-  State<MenuPage> createState() => _MenuPageState();
+  State<TablePage> createState() => _TablePageState();
 }
 
-class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
+class _TablePageState extends State<TablePage> with TickerProviderStateMixin{
 
 
   DBHelper? dbHelper = DBHelper();
 
   late List<UserModel>? _userModel = [];
   final controller = HomeController();
-  late TabController _tabController;
+
   String _cartTag = "";
   int userId = 0;
   bool _loading = true;
@@ -44,23 +45,14 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
   
   @override
   void initState(){
-    _tabController = TabController(length: 7, vsync: this, initialIndex: 0);
-    _tabController.addListener(_handleTabSelection);
+    
     super.initState();
     retrieveProducts();
   }
 
 
-  _handleTabSelection(){
-    if(_tabController.indexIsChanging){
-      setState(() {
-      });
-    }
-  }
-
   @override
   void dispose(){
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -76,9 +68,8 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
   }
 
   Future<void> retrieveProducts() async{
-    // userId = await getUserId();
-    print("World");
-    ApiResponse response = await getProducts();
+    userId = await getUserId();
+    ApiResponse response = await getTables();
     if(response.error == null)
     {
       setState(() {
@@ -88,11 +79,11 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
     }
     else if(response.error == ApiConstants.unauthorized){
             logoutUser();
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                                                      builder: (context) => Home()
+             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
                                                                 ), 
                                                 (route) => false);
-     
+      
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
@@ -119,6 +110,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                                                       builder: (context) => Login()
                                                                 ), 
                                                 (route) => false);
+     
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
@@ -147,7 +139,6 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                   builder: (context, value,child) { 
                     return Text(value.getCounter().toString(), style: TextStyle(color: Colors.white));
                    },
-                
                 ),
                 child:  IconButton(
                             icon: Icon(Icons.shopping_bag_outlined, size: 30,), 
@@ -159,15 +150,6 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
               ),
             ),
           )
-          // IconBtnWithCounter(
-          //   svgSrc: "Assets/Images/cart.svg",
-          //   press:() {},
-          //  ),
-          //  IconBtnWithCounter(
-          //   svgSrc: "Assets/Images/bell.svg",
-          //   numOfItems: 3,
-          //   press:() {},
-          //  ),
         ],
       ),
      
@@ -192,50 +174,29 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                                   top: 10,
                                   left: 0,
                                     right: 0,
-                                    child: Container(
-                                      color: Colors.black,
-                                      child: TabBar(
-                                                    padding: EdgeInsets.only(left:13, right: 10),
-                                                    controller: _tabController,
-                                                    isScrollable: true,
-                                                    // indicator: CircleTabIndicator(color: Color(0xffd17842), radius: 4),
-                                                    indicator: const UnderlineTabIndicator(
-                                                      borderSide: BorderSide(
-                                                        width: 3,
-                                                        color: Color(0xffE57734)
-                                                      ),
-                                                      insets: EdgeInsets.symmetric(horizontal: 16)
-                                                    ),
-                                                    labelColor: Color(0xffd17842),
-                                                    labelStyle: TextStyle(
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: 16
-                                                    ),
-                                                    unselectedLabelColor: Colors.white.withOpacity(0.5),
-                                                      tabs:[
-                                                        Tab(text: "All",),
-                                                        Tab(text: "Starters",),
-                                                        Tab(text: "Main Course",),
-                                                        Tab(text: "Desserts",),
-                                                        Tab(text: "Beverages",),
-                                                        Tab(text: "Desserts",),
-                                                        Tab(text: "Beverages",),
-                                                      ]
-                                              ),
-                                    ),
+                                   child: Container(
+                                    padding: EdgeInsets.only(left: 15),
+                                    child: 
+                                        Text("Tables",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight : FontWeight.w500,
+                                            color: Colors.white.withOpacity(0.5)
+                                          )
+                                        ),
+                                   ),
                               ),               
                               AnimatedPositioned(
                                 duration: const Duration(milliseconds: 500),
                                   top: controller.homeState == HomeState.normal
-                                    ? 85
+                                    ? 50
                                     : -(constraints.maxHeight -
                                         100 * 2 -
                                         85),
                                   left: 0,
                                   right: 0,
                                   height: constraints.maxHeight -
-                                    85 -
-                                    100,
+                                    85,
                                   
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -257,48 +218,46 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                                       mainAxisSpacing: 10,
                                       crossAxisSpacing: 10,
                                     ),
-                                    itemBuilder: (context, index) => ProductCard(
-                                      product: _productList[index],
+                                    itemBuilder: (context, index) => TableCard(
+                                      table: _productList[index],
                                       press: () {
-                                        
-                                              controller.addProductToCart(_productList[index]);
-                                              addCart(_productList[index]);
-                                              _cartTag = '_cartTag';
-
-                                            
+                                              Navigator.push(context, MaterialPageRoute(builder: ((context) => SingleTableScreen(_productList[index]))));
+                                              // controller.addProductToCart(_productList[index]);
+                                              // addCart(_productList[index]);
+                                              // _cartTag = '_cartTag'
                                       }                                       
                                     ),
                                   ),
                                 ),
                               ),
                               // Card Panel
-                              AnimatedPositioned(
-                                duration: const Duration(milliseconds: 500),
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height: controller.homeState == HomeState.normal
-                                    ? 100
-                                    : (constraints.maxHeight - 100),
-                                child: GestureDetector(
-                                  onVerticalDragUpdate: _onVerticalGesture,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(20),
+                              // AnimatedPositioned(
+                              //   duration: const Duration(milliseconds: 500),
+                              //   bottom: 0,
+                              //   left: 0,
+                              //   right: 0,
+                              //   height: controller.homeState == HomeState.normal
+                              //       ? 100
+                              //       : (constraints.maxHeight - 100),
+                              //   child: GestureDetector(
+                              //     onVerticalDragUpdate: _onVerticalGesture,
+                              //     child: Container(
+                              //       padding: const EdgeInsets.all(20),
                                   
-                                    decoration: const BoxDecoration(
-                                            color: Colors.white24,
-                                            borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
-                                    ),
-                                    alignment: Alignment.topLeft,
-                                    child: AnimatedSwitcher(
-                                      duration: const Duration(milliseconds: 500),
-                                      child: controller.homeState == HomeState.normal
-                                          ? CardShortView(controller: controller)
-                                          : CartDetailsView(controller: controller),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              //       decoration: const BoxDecoration(
+                              //               color: Colors.white24,
+                              //               borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                              //       ),
+                              //       alignment: Alignment.topLeft,
+                              //       child: AnimatedSwitcher(
+                              //         duration: const Duration(milliseconds: 500),
+                              //         child: controller.homeState == HomeState.normal
+                              //             ? CardShortView(controller: controller)
+                              //             : CartDetailsView(controller: controller),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           );
                         },

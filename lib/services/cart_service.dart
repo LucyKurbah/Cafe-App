@@ -9,6 +9,7 @@ import 'user_service.dart';
 
 Future<ApiResponse> getCart() async{
   ApiResponse apiResponse = ApiResponse();
+
  try {
     String token = await getToken();
     int userId = await getUserId();
@@ -27,8 +28,9 @@ Future<ApiResponse> getCart() async{
     switch(response.statusCode)
     {
       case 200:
+
         apiResponse.data =  jsonDecode(response.body).map((p) => Cart.fromJson(p)).toList();
-       
+      
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;
@@ -40,15 +42,13 @@ Future<ApiResponse> getCart() async{
   } catch (e) {
      apiResponse.error =e.toString();
   }
-
   return apiResponse;
 }
 
 
 Future<ApiResponse> addToCart(Product product) async{
   ApiResponse apiResponse = ApiResponse();
-  print("Hello");
- try {
+  try {
     String token = await getToken();
     int userId = await getUserId();
 
@@ -64,7 +64,6 @@ Future<ApiResponse> addToCart(Product product) async{
                         'quantity' : "1"
                     },   
                );
-    print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:
@@ -87,8 +86,7 @@ Future<ApiResponse> addToCart(Product product) async{
 
 Future<ApiResponse> incrementCart(Cart cart) async{
   ApiResponse apiResponse = ApiResponse();
-  print("Hello");
- try {
+  try {
     String token = await getToken();
     int userId = await getUserId();
 
@@ -108,7 +106,6 @@ Future<ApiResponse> incrementCart(Cart cart) async{
     {
       case 200:
       apiResponse.data =  "Added to cart";
-       print(apiResponse.data);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;
@@ -142,12 +139,48 @@ Future<ApiResponse> decrementCart(Cart cart) async{
                         'quantity' : "1"
                     },   
                );
-    print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:
         apiResponse.data =  "Removed from cart";
         print(apiResponse.data);
+        break;
+      case 401:
+        apiResponse.error = ApiConstants.unauthorized;
+        break;
+      default:
+         apiResponse.error = response.statusCode.toString();
+        break;
+    }
+  } catch (e) {
+     apiResponse.error =e.toString();
+  }
+
+  return apiResponse;
+}
+
+
+Future<ApiResponse> getTotal() async{
+  ApiResponse apiResponse = ApiResponse();
+
+ try {
+    String token = await getToken();
+    int userId = await getUserId();
+
+    final response = await http.post(Uri.parse(ApiConstants.getTotalUrl),
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer $token'
+                },
+                body:{
+                        'user_id': userId.toString(),
+                    },   
+               );
+
+    switch(response.statusCode)
+    {
+      case 200:
+        apiResponse.data =  jsonDecode(response.body);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;

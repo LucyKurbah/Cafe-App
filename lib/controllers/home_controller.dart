@@ -1,6 +1,8 @@
 
 import 'package:cafe_app/models/Product.dart';
 import 'package:cafe_app/models/ProductItem.dart';
+import 'package:cafe_app/models/TableItem.dart';
+import 'package:cafe_app/models/Table.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,6 +22,7 @@ class HomeController extends ChangeNotifier {
   double get totalPrice => _totalPrice;
 
   List<ProductItem> cart = [];
+  List<TableItem> cartTable = [];
 
   void changeHomeState(HomeState state) {
     homeState = state;
@@ -31,13 +34,26 @@ class HomeController extends ChangeNotifier {
     for (ProductItem item in cart) {
       if (item.product.title == product.title) {
         item.increment();
-    
         notifyListeners();
         return;
       }
     }
-    // print(product);
+
     cart.add(ProductItem(product: product));
+    notifyListeners();
+  }
+
+  void addTableToCart(TableModel table) {
+   
+    for (TableItem item in cartTable) {
+      if (item.table.table_name == table.table_name) {
+        item.increment();
+        notifyListeners();
+        return;
+      }
+    }
+
+    cartTable.add(TableItem(table: table));
     notifyListeners();
   }
 

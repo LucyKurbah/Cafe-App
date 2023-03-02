@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
-class Cart{
+class Cart {
     
     int user_id,  item_id, quantity; 
     double item_price;

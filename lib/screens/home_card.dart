@@ -1,5 +1,9 @@
+import 'package:cafe_app/screens/table_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'conference_screen.dart';
+import 'menu.dart';
 
 class HomeCard extends StatefulWidget {
   @override
@@ -35,6 +39,13 @@ class _HomeCardState extends State<HomeCard> {
     'floor',
   ];
 
+  List<Widget> myWidgets  = [
+    TablePage(),
+    ConferenceScreen(),
+    MenuPage(),
+    TablePage(),
+  ];
+
   List<Map<String,dynamic>> gridMap = [
 
     {
@@ -66,7 +77,7 @@ class _HomeCardState extends State<HomeCard> {
     
     Expanded(
       child: Container(
-        height:MediaQuery.of(context).size.height *1,
+        height:MediaQuery.of(context).size.height *2,
         // color: Colors.grey[800],
         padding: EdgeInsets.all(30),
         decoration: BoxDecoration(
@@ -94,8 +105,8 @@ class _HomeCardState extends State<HomeCard> {
                     return InkWell(
                          onTap: (){
                            
-                            Navigator.pushNamed(context, '/${pages[index]}');
-                            // Get.to(() =>  '/${pages[index]}', transition: Transition.zoom);
+                            // Navigator.pushNamed(context, '/${pages[index]}');
+                            Get.to(() => myWidgets[index], transition: Transition.rightToLeftWithFade, duration: Duration(milliseconds: 500));
                           },
                       child: Container(
                         decoration: BoxDecoration(
