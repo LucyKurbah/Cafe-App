@@ -1,7 +1,7 @@
 class ApiConstants {
   //ip= "10.179.2.187"
-  static String baseUrl = 'http://10.179.2.187:8000/api';
-  static String ipUrl = 'http://10.179.2.187:8000';
+  static String baseUrl = 'http://13.231.134.208/api';
+  static String ipUrl = 'http://13.231.134.208';
   static String loginUrl = '$baseUrl/login';
   static String registerUrl = '$baseUrl/register';
   static String logoutUrl = '$baseUrl/logout';
@@ -15,7 +15,7 @@ class ApiConstants {
   static String getTotalUrl = '$baseUrl/cart/getTotal';
 
 
-  static String imagePath = "http://10.179.2.187:8000";
+  static String imagePath = "http://13.231.134.208/";
   static String imageUrl = "$baseUrl/$imagePath";
 
   static String serverError = 'Servor Error';

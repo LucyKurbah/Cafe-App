@@ -7,8 +7,11 @@ import '../widgets/custom_widgets.dart';
 import 'home_card.dart';
 import 'cartscreen.dart';
 import 'login.dart';
+import 'settings.dart';
+import 'profile.dart';
 import 'dart:math';
 import 'package:cafe_app/services/user_service.dart';
+import 'package:get/get.dart';
 
  class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -123,12 +126,18 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                       child: ListView(
                           children: [
                                 ListTile(
-                                  onTap: (){},
+                                  onTap: (){
+                                    //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Home()));
+                                     Get.to(Home(), transition: Transition.rightToLeftWithFade);
+                                  },
                                   leading: Icon(Icons.home, color: Colors.white,),
                                   title: Text("Home", style: TextStyle(color: Colors.white),),
                                 ),
                                 ListTile(
-                                  onTap: (){},
+                                  onTap: (){
+                                    //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Profile()));
+                                      Get.to(Profile(), transition: Transition.rightToLeftWithFade);
+                                  },
                                   leading: Icon(
                                     Icons.person, 
                                     color: Colors.white,),
@@ -138,7 +147,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                       color: Colors.white),),
                                 ),
                                 ListTile(
-                                  onTap: (){},
+                                  onTap: (){
+                                    //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Setting()));
+                                     Get.to(Setting(), transition: Transition.rightToLeftWithFade);
+                                  },
                                   leading: Icon(
                                         Icons.settings, 
                                         color: Colors.white,),
