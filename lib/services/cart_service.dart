@@ -13,7 +13,7 @@ Future<ApiResponse> getCart() async{
  try {
     String token = await getToken();
     int userId = await getUserId();
-
+    print(userId);
     final response = await http.post(Uri.parse(ApiConstants.cartUrl),
                 headers: {
                     'Accept' : 'application/json',
@@ -24,13 +24,16 @@ Future<ApiResponse> getCart() async{
                     },   
                );
  
-
+    print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:
-
-        apiResponse.data =  jsonDecode(response.body).map((p) => Cart.fromJson(p)).toList();
-      
+        if(response.body =='305'){
+          apiResponse.data = '';//User not logged in
+        }
+        else{
+          apiResponse.data =  jsonDecode(response.body).map((p) => Cart.fromJson(p)).toList();
+        } 
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;
@@ -64,6 +67,7 @@ Future<ApiResponse> addToCart(Product product) async{
                         'quantity' : "1"
                     },   
                );
+
     switch(response.statusCode)
     {
       case 200:

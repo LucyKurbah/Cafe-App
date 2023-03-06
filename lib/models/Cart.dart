@@ -16,12 +16,12 @@ class Cart {
 
   factory Cart.fromJson(Map<String, dynamic> json){
     return Cart(
-      item_id : json['item_id'],
+      item_id : json['food_id'],
       user_id : json['user_id'],
-      item_price : double.parse(json['item_price']),
-      quantity : json['quantity'],
-      image : json['item_img_loc'],
-      item_name : json['item_name'],
+      item_price : double.parse(json['food_price']),
+      quantity : json['food_quantity'],
+      image : json['path_file'],
+      item_name : json['food_name'],
     );
   }
 

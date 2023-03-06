@@ -10,10 +10,10 @@ class Product{
   
     return Product(
       id : json['id'],
-      title : json['item_name'],
-      image : json['item_img_loc'],
-      price : double.parse(json['item_price']),
-      desc : json['item_desc'],
+      title : json['food_name'],
+      image : json['path_file'],
+      price : double.parse(json['price']),
+      desc : json['description'],
     );
   }
 

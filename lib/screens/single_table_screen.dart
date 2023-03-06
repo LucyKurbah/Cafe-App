@@ -37,9 +37,9 @@ class SingleTableScreen extends StatelessWidget {
                       tag: '${table.id}',
                       child: Image.network(
                                    table.image,
+                                   fit: BoxFit.cover
                                   ),
                     ),
-                    
                   ),
                   Container(
                     margin: EdgeInsets.only(top: size.height *0.3),
@@ -56,14 +56,6 @@ class SingleTableScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Text(
-                              //     "Table",
-                              //     style: TextStyle(
-                              //       color: Colors.white.withOpacity(0.4),
-                              //       letterSpacing: 3
-                              //     ),
-                              // ),
-                              // SizedBox(height: 20,),
                               Text(
                               table.table_name,
                                 style: TextStyle(
@@ -83,51 +75,7 @@ class SingleTableScreen extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 30,),
-                              // Container(
-                              //   width: MediaQuery.of(context).size.width,
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //     children: [
-                              //       // Container(
-                              //       //   padding: EdgeInsets.all(15),
-                              //       //   width: 120,
-                              //       //   decoration: BoxDecoration(
-                              //       //     border: Border.all(
-                              //       //       color: Colors.white.withOpacity(0.2)
-                              //       //     ),
-                              //       //     borderRadius: BorderRadius.circular(20),
-                              //       //   ),
-                              //       //   child: Row(
-                              //       //     mainAxisAlignment: MainAxisAlignment.center,
-                              //       //     children: [
-                              //       //       Icon(
-                              //       //         Icons.delete,
-                              //       //         size: 18,
-                              //       //         color: Colors.white,
-                              //       //       ),
-                              //       //       SizedBox(width: 15,),
-                              //       //       Text(
-                              //       //         "2",
-                              //       //         style: TextStyle(
-                              //       //           color: Colors.white,
-                              //       //           fontSize: 16,
-                              //       //           fontWeight: FontWeight.w500
-                              //       //         ),
-                              //       //       ),
-                              //       //       SizedBox(width: 15,),
-                              //       //       Icon(
-                              //       //         Icons.add,
-                              //       //         size: 18,
-                              //       //         color: Colors.white,
-                              //       //       )
-                              //       //     ],
-                              //       //   ),
-                              //       // ),
-                                  
-                              //     ],
-                              //   ),
-                              // ),
-                              // SizedBox(height: 20,),
+
                               Text("No of seats: ${table.table_seats}",
                                   style: TextStyle(
                                     fontSize: 18,
@@ -142,27 +90,7 @@ class SingleTableScreen extends StatelessWidget {
                                         fontWeight: FontWeight.w500,
                                         color : Colors.white  
                                       )),
-                              // Row(
-                              //   children: [
-                              //     Text(
-                              //       "Tabel A",
-                              //       style: TextStyle(
-                              //         fontSize: 16,
-                              //         fontWeight: FontWeight.w500,
-                              //         color: Colors.white
-                              //       ),
-                              //     ),
-                              //     SizedBox(height: 10,),
-                              //      Text(
-                              //       "No of Seats",
-                              //       style: TextStyle(
-                              //         fontSize: 16,
-                              //         fontWeight: FontWeight.w500,
-                              //         color: Colors.white
-                              //       ),
-                              //     )
-                              //   ],
-                              // ),
+
                               SizedBox(height: 100,),
                               Container(
                                 width: MediaQuery.of(context).size.width,

@@ -19,12 +19,12 @@ class CardShortView extends StatelessWidget {
           padding: const EdgeInsets.only(right: 5),
           child:  Icon(Icons.shopping_cart,color: Color(0xffe57734),size: 27,)
         ),
-          IconButton(
-            onPressed: (){},
-            icon:
-              Image.asset('Assets/icons/arrow-up.png',height: 20,),
+          // IconButton(
+          //   onPressed: (){},
+          //   icon:
+          //     // Image.asset('Assets/icons/arrow_up.png',height: 20,),
               
-          ),
+          // ),
         const SizedBox(width: defaultPadding),
         Expanded(
           child: SingleChildScrollView(

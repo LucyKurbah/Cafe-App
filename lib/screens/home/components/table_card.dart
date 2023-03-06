@@ -36,26 +36,21 @@ class TableCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InkWell(
-                      onTap: () {                        
-                      },
-                      child: 
-                      Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        height: 120,
-                        width: MediaQuery.of(context).size.width,
-                        child:
-                              Hero(
-                                tag: '${table.id}',
-                                child: Image.network(
-                                   table.image,
-                                    fit: BoxFit.contain,
-                                    scale: 0.4,
-                                  ),
-                              )
-                             
-                      ),
-              ),
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              height: 120,
+              width: MediaQuery.of(context).size.width,
+              child:
+                    Hero(
+                      tag: '${table.id}',
+                      child: Image.network(
+                         table.image,
+                          fit: BoxFit.contain,
+                          scale: 0.4,
+                        ),
+                    )
+                   
+            ),
             const SizedBox(height: 10,),
             Text(
               table.table_name,

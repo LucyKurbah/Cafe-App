@@ -7,6 +7,8 @@ import 'package:cafe_app/services/api_response.dart';
 import 'package:cafe_app/api/apiFile.dart';
 import 'package:cafe_app/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
+import '../screens/home.dart';
 
 
 Future<ApiResponse> login(String email, String password) async {
@@ -131,7 +133,7 @@ void logoutUser() async{
   SharedPreferences pref = await SharedPreferences.getInstance();
    pref.remove('userId');
    pref.remove('token');
-   
+   Get.to(Home());
 }
 
 String? getStringImage(File? file){

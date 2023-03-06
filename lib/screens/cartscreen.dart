@@ -44,7 +44,7 @@ class _CartScreenState extends State<CartScreen> {
                       Container(
                         height: 130,
                         width: 140,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage("Assets/Images/cafe1.jfif"),
                             fit: BoxFit.fill
@@ -59,9 +59,9 @@ class _CartScreenState extends State<CartScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("data", style: TextStyle(color: Colors.white),),
-                                Text("Ingredients data", style: TextStyle(color: Colors.white),),
-                                Text("30.00", style: TextStyle(
+                                const Text("data", style: TextStyle(color: Colors.white),),
+                                const Text("Ingredients data", style: TextStyle(color: Colors.white),),
+                                const Text("30.00", style: TextStyle(
                                   color: Color(0xff9b96d6),
                                   fontWeight: FontWeight.bold
                                 ),),
@@ -111,7 +111,6 @@ class _CartScreenState extends State<CartScreen> {
                       )
                     ],
                   ),
-                 
                 ],
               ),
             ),
@@ -123,10 +122,8 @@ class _CartScreenState extends State<CartScreen> {
     // TODO: implement initState
     super.initState();
     retrieveCart();
-   
   }
 
-  
   Future<void> retrieveCart() async{
     userId = await getUserId();
     
@@ -155,35 +152,6 @@ class _CartScreenState extends State<CartScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
     }
   }
-
-  // Future<void> retrieveTotal() async{
-  //   userId = await getUserId();
-    
-  //   ApiResponse response = await getTotal();
-    
-  //   if(response.error == null)
-  //   {
-     
-  //     setState(() {
-  //       _totalPrice = response.data as List<dynamic>;
-
-  //       // _totalCartAmount = _totalPrice[0]['totalprice'];
-  //     });
-  //   }
-  //   else if(response.error == ApiConstants.unauthorized){
-
-  //     logoutUser().then((value) => {
-  //            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-  //                                                     builder: (context) => Login()
-  //                                                               ), 
-  //                                               (route) => false)
-  //     });
-  //   }
-  //   else{
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
-  //   }
-  // }
-
 
   Future<void> addCart(Cart cart) async{
     userId = await getUserId();

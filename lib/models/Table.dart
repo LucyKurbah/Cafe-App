@@ -12,9 +12,9 @@ class TableModel{
     return TableModel(
       id : json['id'],
       table_name : json['table_name'],
-      image : json['table_img_loc'],
-      price : double.parse(json['table_price']),
-      table_seats : int.parse(json['table_seats']),
+      image : json['path_file'],
+      price : double.parse(json['price']),
+      table_seats : int.parse(json['seat']),
     );
   }
 

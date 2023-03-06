@@ -85,12 +85,8 @@ class _TableCardState extends State<TableCard> with TickerProviderStateMixin{
       });
     }
     else if(response.error == ApiConstants.unauthorized){
-      logout().then((value) => {
-             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                                                      builder: (context) => Login()
-                                                                ), 
-                                                (route) => false)
-      });
+      logoutUser();
+    
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
@@ -112,12 +108,7 @@ class _TableCardState extends State<TableCard> with TickerProviderStateMixin{
       });
     }
     else if(response.error == ApiConstants.unauthorized){
-      logout().then((value) => {
-             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                                                      builder: (context) => Login()
-                                                                ), 
-                                                (route) => false)
-      });
+      logoutUser();
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));

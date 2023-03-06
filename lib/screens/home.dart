@@ -186,7 +186,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
 
             TweenAnimationBuilder(
               tween: Tween<double>(begin: 0,end: value), 
-              duration: Duration(milliseconds: 300), 
+              duration: Duration(milliseconds: 200), 
               curve: Curves.easeIn,
               builder: (_, double val,__){
                 return (Transform(
@@ -261,10 +261,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                            children: [
                              Center(
                                child: Badge(
-                                  badgeContent: Text('0', style: TextStyle(color: Colors.white)),
+                                  badgeContent: Text('0', style: TextStyle(color: Colors.black)),
                                   badgeAnimation: BadgeAnimation.fade(),
                                   badgeStyle: BadgeStyle(
-                                    badgeColor: Color(0xffE57734)
+                                    badgeColor: Colors.black//Color(0xffE57734)
                                   ),
                                   child: IconButton(
                                     icon: Icon(Icons.shopping_bag_outlined, size: 30,), 

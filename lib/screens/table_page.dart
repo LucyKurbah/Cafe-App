@@ -133,11 +133,11 @@ class _TablePageState extends State<TablePage> with TickerProviderStateMixin{
             child: Center(
               child: Badge(
                 badgeStyle: BadgeStyle(
-                  badgeColor: Color(0xffe57734)
+                  badgeColor: Colors.black//Color(0xffe57734)
                 ),
                 badgeContent: Consumer<HomeController>(
                   builder: (context, value,child) { 
-                    return Text(value.getCounter().toString(), style: TextStyle(color: Colors.white));
+                    return Text(value.getCounter().toString(), style: TextStyle(color: Colors.black /*Colors.white*/));
                    },
                 ),
                 child:  IconButton(

@@ -21,11 +21,13 @@ Future<ApiResponse> getTables() async{
                     'Authorization' : 'Bearer $token'
                 },
                );
-    print(response.statusCode);
+  
     switch(response.statusCode)
     {
       case 200:
+      print(response.body);
         apiResponse.data =  jsonDecode(response.body).map((p) => TableModel.fromJson(p)).toList();
+        print(apiResponse.data);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;

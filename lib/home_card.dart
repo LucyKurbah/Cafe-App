@@ -1,16 +1,11 @@
-import 'package:cafe_app/screens/table_page.dart';
+import 'package:cafe_app/coffee_card.dart';
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import 'conference_screen.dart';
-import 'menu.dart';
+class HomeCard extends StatelessWidget {
 
-class HomeCard extends StatefulWidget {
-  @override
-  State<HomeCard> createState() => _HomeCardState();
-}
-
-class _HomeCardState extends State<HomeCard> {
   List<String> images = [
     'food/one.jpg',
     'food/two.jpg',
@@ -33,17 +28,10 @@ class _HomeCardState extends State<HomeCard> {
   ];
 
   List<String> pages = [
-     'table',
+    'table',
     'conference',
-     'coffee',
+    'coffee',
     'floor',
-  ];
-
-  List<Widget> myWidgets  = [
-    TablePage(),
-    ConferenceScreen(),
-    MenuPage(),
-    TablePage(),
   ];
 
   List<Map<String,dynamic>> gridMap = [
@@ -76,8 +64,9 @@ class _HomeCardState extends State<HomeCard> {
     return 
     
     Expanded(
+     
       child: Container(
-        height:MediaQuery.of(context).size.height *2,
+        height:MediaQuery.of(context).size.height *1,
         // color: Colors.grey[800],
         padding: EdgeInsets.all(30),
         decoration: BoxDecoration(
@@ -105,10 +94,11 @@ class _HomeCardState extends State<HomeCard> {
                     return InkWell(
                          onTap: (){
                            
-                            // Navigator.pushNamed(context, '/${pages[index]}');
-                            Get.to(() => myWidgets[index], transition: Transition.rightToLeftWithFade, duration: Duration(milliseconds: 300));
+                            Navigator.pushNamed(context, '/${pages[index]}');
+                            
                           },
                       child: Container(
+                       
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30.0),
                           color: Colors.white,

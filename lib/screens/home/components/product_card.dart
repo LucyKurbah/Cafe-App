@@ -43,11 +43,17 @@ class ProductCard extends StatelessWidget {
                         height: 120,
                         width: MediaQuery.of(context).size.width,
                         child:
-                              Image.network(
-                                 product.image,
+                              // Image.network(
+                              //    product.image,
+                              //     fit: BoxFit.contain,
+                              //     scale: 0.4,
+                              //   )
+                                FadeInImage(
+                                  placeholder: AssetImage('Images/placeholder_image.jpg'),
+                                  image: NetworkImage( product.image,),
                                   fit: BoxFit.contain,
-                                  scale: 0.4,
-                                )
+                                ),
+                                
                              
                       ),
               ),
@@ -59,10 +65,10 @@ class ProductCard extends StatelessWidget {
                   .subtitle1!
                   .copyWith(fontWeight: FontWeight.w600, fontSize: 18,color: Colors.white),
             ),
-            Text(
-               product.desc,
-              style: Theme.of(context).textTheme.caption?.copyWith(color: Colors.white),
-            ),
+            // Text(
+            //    product.desc,
+            //   style: Theme.of(context).textTheme.caption?.copyWith(color: Colors.white),
+            // ),
             const SizedBox(height: 20,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
