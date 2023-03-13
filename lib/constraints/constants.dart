@@ -45,3 +45,17 @@ Row kLoginRegisterHint(String text, String label, Function onTap)
               ]
   );
 }
+
+Row kLoginForgotPasswordHint(String text, String label, Function onTap)
+{
+  return  Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(text),
+                GestureDetector(
+                        child: Text(label, style: TextStyle(color: Colors.blue),),
+                        onTap: (() => onTap()
+                      ))
+              ]
+  );
+}

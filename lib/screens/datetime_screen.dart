@@ -6,6 +6,7 @@ import 'package:cafe_app/widgets/custom_widgets.dart';
 import 'package:provider/provider.dart';
 import '../api/apiFile.dart';
 import '../services/api_response.dart';
+import '../services/cart_service.dart';
 import '../services/user_service.dart';
 import '../services/table_service.dart';
 import 'cartscreen.dart';
@@ -28,9 +29,16 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
   TextEditingController _date = TextEditingController();
   TextEditingController _selectedtimeFrom = TextEditingController();
   TextEditingController _selectedtimeTo = TextEditingController();
+  TextEditingController noOfHours = TextEditingController();
+  int hours=0,minutes =0;
+
   TimeOfDay? timeFrom, timeTo;
   
- 
+  String _cartTag = "";
+  int userId = 0;
+  bool _loading = true;
+  String _cartMessage = '';
+
 
   void _updateSecondTimePicker(TimeOfDay newTime) {
     if (timeFrom != null && newTime != null && newTime.hour < timeFrom!.hour) {
@@ -48,13 +56,40 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
     DateTime parsedTime =
         DateFormat.Hm().parse(newTime.format(context).toString());
 
-
     String formattedTime = DateFormat('h:mm a').format(parsedTime);
 
     setState(() {
       _selectedtimeTo.text = formattedTime;
+      calculateHours(_selectedtimeFrom.text, formattedTime);
       checkDateTimeAvailability(widget.table.id, _selectedtimeFrom.text, formattedTime);
     });
+  }
+
+  
+  Future<void> addCart(TableModel table, String totalPrice, String date, String timeFrom, String timeTo) async{
+    userId = await getUserId();
+
+    ApiResponse response = await addTableToCart(table, totalPrice, date, timeFrom, timeTo);
+    if(response.error == null)
+    {
+      setState(() {
+        //add the counter here
+        //incrementCount();
+        _cartMessage = response.data.toString();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        _loading = _loading ? !_loading : _loading;
+      });
+    }
+    else if(response.error == ApiConstants.unauthorized){
+          logoutUser();
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
   }
 
   @override
@@ -78,6 +113,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                       tag: '${widget.table.id}',
                       child: Image.network(
                         widget.table.image,
+                         fit: BoxFit.fill
                       ),
                     ),
                   ),
@@ -110,7 +146,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                     fontWeight: FontWeight.w500,
                                     color: Colors.white.withOpacity(0.8))),
                             SizedBox(height: 30),
-                            Text("PRICE: Rs. ${widget.table.price} ",
+                            Text("PRICE: Rs. ${widget.table.price} /hr",
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
@@ -122,7 +158,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                               color: Colors.white.withOpacity(0.5),
                             ),
                             Container(
-                              height: 200,
+                              height: 110,
                               child: Column(
                                 children: [
                                   Flexible(
@@ -174,7 +210,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                               icon: Icon(
                                                   Icons.calendar_month_sharp,
                                                   color: Colors.white),
-                                              labelText: "Select Date",
+                                              labelText: "Select Time",
                                               labelStyle: TextStyle(
                                                   color: Colors.white),
                                             ),
@@ -203,7 +239,6 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                                           timeFrom!
                                                               .format(context)
                                                               .toString());
-
                                                   String formattedTime =
                                                       DateFormat('h:mm a')
                                                           .format(parsedTime);
@@ -233,7 +268,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                               icon: Icon(
                                                   Icons.calendar_month_sharp,
                                                   color: Colors.white),
-                                              labelText: "Select Date",
+                                              labelText: "Select Time",
                                               labelStyle: TextStyle(
                                                   color: Colors.white),
                                             ),
@@ -273,6 +308,53 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                 ],
                               ),
                             ),
+                            SizedBox(height: 30,),
+                            noOfHours.text.isNotEmpty ?Container(
+                                  width: double.infinity,
+                                  margin: EdgeInsets.all(16.0),
+                                  padding: EdgeInsets.all(16.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                     Text("No of hours: $hours",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.white)),
+                                            SizedBox(height: 8.0),
+                                       
+                                      Text("TOTAL PRICE: Rs."+ noOfHours.text,
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.white))
+                                              ],
+                                            ),
+                                          ) 
+                              : SizedBox.shrink(),
+                              SizedBox(height:10),
+                              noOfHours.text.isNotEmpty ?Center(
+                                child: Container(
+                                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromARGB(255, 50, 54, 56),
+                                        borderRadius: BorderRadius.circular(18)
+                                      ),
+                                     
+                                      child:
+                                              TextButton(
+                                                      child: Text('Add to Cart', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                                                      onPressed:  (){
+                                                        // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
+                                                         addCart(widget.table, noOfHours.text, _date.toString(), _selectedtimeFrom.toString(), _selectedtimeTo.toString());
+                                                        }
+                                                      )
+                                    ),
+                              ):SizedBox.shrink(),
+                           
                           ],
                         ),
                       )),
@@ -322,9 +404,10 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
   void checkDateTimeAvailability(table_id, String timeFrom, String timeTo)  async {
    
     ApiResponse response = await getTableDetails(table_id, timeFrom, timeTo, _date.text);
-
+    
     if (response.error == null) {
-      print(response.data == {});
+      print(response.data);
+      print("Hello");
       if(response.data != null)
       {
         print("Time and date available");
@@ -341,4 +424,29 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
           .showSnackBar(SnackBar(content: Text('${response.error}')));
     }
   }
+
+   void calculateHours(String timeString1, String timeString2) {
+      // Parse the time strings into DateTime objects
+      DateTime time1 = DateFormat('h:mm a').parse(timeString1);
+      DateTime time2 = DateFormat('h:mm a').parse(timeString2);
+
+      // Calculate the duration between the two DateTime objects
+      Duration difference = time2.difference(time1);
+
+      // Get the difference in hours
+      hours = difference.inHours;
+
+      // Get the difference in hours
+      minutes = difference.inMinutes.remainder(60);
+      print('The difference between $timeString1 and $timeString2 is $hours hours and $minutes minutes');
+      if (minutes > 0) {
+        hours += 1;
+      }
+      else if(hours == 0)
+      {
+        hours = 1;
+      }
+      noOfHours.text = (hours* widget.table.price).toString();
+      // print('The difference between $timeString1 and $timeString2 is $hours hours and $minutes minutes');
+   }
 }

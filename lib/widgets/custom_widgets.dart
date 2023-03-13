@@ -11,10 +11,11 @@ showSnackBar(
     Duration? duration,
     position: SnackPosition.BOTTOM}) {
   Get.snackbar(title, message,
-      backgroundColor: Colors.redAccent,
+      backgroundColor: (title=='error')?Colors.redAccent:Colors.grey,
       colorText: Colors.white,
       snackPosition: position,
-      duration: duration ?? const Duration(seconds: 3));
+      margin: EdgeInsets.all( 10),
+      duration: duration ?? const Duration(seconds: 2));
 }
 
 Widget textView(String text,

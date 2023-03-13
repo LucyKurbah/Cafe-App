@@ -37,7 +37,7 @@ class SingleTableScreen extends StatelessWidget {
                       tag: '${table.id}',
                       child: Image.network(
                                    table.image,
-                                   fit: BoxFit.cover
+                                   fit: BoxFit.fill
                                   ),
                     ),
                   ),

@@ -87,6 +87,43 @@ Future<ApiResponse> register(String name, String email, String password) async {
   return apiResponse;
 }
 
+Future<ApiResponse> forgotPassword(String email) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    final response = await http.post(
+      Uri.parse(ApiConstants.forgotPasswordUrl),
+      headers: {'Accept':'application/json'},
+      body:{
+        'email': email, 
+        }
+    );
+      
+    switch(response.statusCode)
+    {
+      case 200:
+        apiResponse.data = response.body;
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 403:
+        apiResponse.error = jsonDecode(response.body)['message'];
+        break;
+       case 300:
+        apiResponse.error = "Email does not exist";
+        break;
+      default:
+         apiResponse.error = ApiConstants.somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+     apiResponse.error = ApiConstants.serverError;
+  }
+
+  return apiResponse;
+}
+
 Future<ApiResponse> getUserDetails() async {
   ApiResponse apiResponse = ApiResponse();
   try {

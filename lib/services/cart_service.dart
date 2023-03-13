@@ -1,3 +1,4 @@
+import 'package:cafe_app/models/Table.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../api/apiFile.dart';
@@ -62,9 +63,51 @@ Future<ApiResponse> addToCart(Product product) async{
                 },
                 body:{
                        'user_id': userId.toString(),
-                        'id' : product.id.toString(),
-                        'item_price' : product.price.toString(),
-                        'quantity' : "1"
+                        'food_id' : product.id.toString(),
+                        'food_price' : product.price.toString(),
+                        'food_quantity' : "1",
+                        'flag' : 'F'
+                    },   
+               );
+    switch(response.statusCode)
+    {
+      case 200:
+        apiResponse.data =  "Added to cart";
+        print(apiResponse.data);
+        break;
+      case 401:
+        apiResponse.error = ApiConstants.unauthorized;
+        break;
+      default:
+         apiResponse.error = response.statusCode.toString();
+        break;
+    }
+  } catch (e) {
+     apiResponse.error =e.toString();
+  }
+
+  return apiResponse;
+}
+
+Future<ApiResponse> addTableToCart(TableModel table, String totalPrice, String date, String timeFrom, String timeTo) async{
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    int userId = await getUserId();
+
+    final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer $token'
+                },
+                body:{
+                        'user_id': userId.toString(),
+                        'table_id' : table.id.toString(),
+                        'table_price' : (totalPrice),
+                        'date' : date,
+                        'time_from' : timeFrom,
+                        'time_to' : timeTo,
+                        'flag': 'T'
                     },   
                );
 

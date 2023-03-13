@@ -2,6 +2,7 @@ import 'package:cafe_app/controllers/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe_app/constraints/constants.dart';
 import 'package:get/get.dart';
+import 'forgotPassword.dart';
 import 'register.dart';
 
 class Login extends StatefulWidget {
@@ -136,6 +137,14 @@ class _LoginState extends State<Login> {
                           () {
                        
                         Get.to(Register(), transition: Transition.rightToLeftWithFade);
+                      }),
+                       SizedBox(
+                        height: 20,
+                      ),
+                      kLoginForgotPasswordHint('', 'Forgot Password?',
+                          () {
+                       
+                        Get.to(ForgotPassword(), transition: Transition.rightToLeftWithFade);
                       }),
                       SizedBox(
                         height: 40,

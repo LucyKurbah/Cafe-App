@@ -73,7 +73,6 @@ Future<ApiResponse> getTableDetails(table_id, timeFrom, timeTo, bookDate) async{
     {
       case 200:
         apiResponse.data =  jsonDecode(response.body).map((p) => OrderModel.fromJson(p)).toList();
-        print(apiResponse.data);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;
