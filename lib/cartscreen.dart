@@ -1,5 +1,13 @@
+import 'package:cafe_app/screens/home/components/cart_card.dart';
 import 'package:flutter/material.dart';
 import 'home.dart';
+import 'package:cafe_app/services/api_response.dart';
+import 'package:cafe_app/api/apiFile.dart';
+import 'package:cafe_app/services/user_service.dart';
+import 'package:cafe_app/services/cart_service.dart';
+import 'package:cafe_app/screens/login.dart';
+import '../models/Cart.dart';
+import 'package:get/get.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -9,14 +17,17 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-
-
-  
   int count  = 1;
+  int userId = 0;
+  bool _loading = true;
+  String _cartMessage = '';
+  List<dynamic> _cartList = [].obs;
+  int _totalPrice = 0;
+  // RxDouble _totalCartAmount = 0.00.obs;
+  // final CartController cartController = CartController();
 
   _buildSingleCartProduct(){
     return Container(
-            
             height: 150,
             width: double.infinity,
       
@@ -83,6 +94,7 @@ class _CartScreenState extends State<CartScreen> {
                                         onTap: () {
                                           setState((){
                                            count++;
+                                           
                                           });
                                         },
                                       ),
@@ -103,11 +115,160 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    retrieveCart();
+    retrieveTotal();
+  }
+
+  
+  Future<void> retrieveCart() async{
+    userId = await getUserId();
+    
+    ApiResponse response = await getCart();
+    
+    if(response.error == null)
+    {
+     
+      setState(() {
+        _cartList = response.data as List<dynamic>;
+
+        _loading = _loading ? !_loading : _loading;
+        //retrieveTotal();
+      });
+    }
+    else if(response.error == ApiConstants.unauthorized){
+
+      logoutUser();
+             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
+
+  Future<void> retrieveTotal() async{
+    userId = await getUserId();
+    
+    ApiResponse response = await getTotal();
+    
+    if(response.error == null)
+    {
+     
+      setState(() {
+        _totalPrice = response.data as int;
+         _loading = _loading ? !_loading : _loading;
+        // _totalCartAmount = _totalPrice[0]['totalprice'];
+      });
+    }
+    else if(response.error == ApiConstants.unauthorized){
+
+      // logoutUser().then((value) => {
+      //        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+      //                                                 builder: (context) => Login()
+      //                                                           ), 
+      //                                           (route) => false)
+      // });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("An Error Occurred")));
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
+
+
+  Future<void> addCart(Cart cart) async{
+    userId = await getUserId();
+
+    ApiResponse response = await incrementCart(cart);
+    if(response.error == null)
+    {
+        retrieveCart();
+        _cartMessage = response.data.toString();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        _loading = _loading ? !_loading : _loading;
+    }
+    else if(response.error == ApiConstants.unauthorized){
+      logoutUser();
+             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);
+      
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
+
+
+ Future<void> removeCart(Cart cart) async{
+    userId = await getUserId();
+  
+    ApiResponse response = await decrementCart(cart);
+    if(response.error == null)
+    {
+         retrieveCart();
+        _cartMessage = response.data.toString();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        _loading = _loading ? !_loading : _loading;
+    }
+    else if(response.error == ApiConstants.unauthorized){
+      logoutUser();
+             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);
+     
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: 
-      AppBar(
+      appBar: _buildAppBar(),
+      
+      body: Stack(
+        children: [
+            Container(),
+            Positioned(
+           
+              child: ListView.builder(
+                itemCount: _cartList.length,
+                shrinkWrap: true,
+                padding: EdgeInsets.all(16),
+                
+                itemBuilder: ((context, index) => 
+                   CartCard(
+                      cart: _cartList[index], 
+                      addItem: (){
+                          addCart(_cartList[index]);
+                      }, 
+                      removeItem: (){
+                          removeCart(_cartList[index]);
+
+                      })
+                ),
+               )
+            ),
+            _buildBottom(),
+        ],
+      )
+       
+    );
+  }
+
+  _buildAppBar(){
+    return AppBar(
         backgroundColor: Colors.black,
         centerTitle: true,
         title: Text("Cart", style: TextStyle(color: Colors.white),),
@@ -123,16 +284,147 @@ class _CartScreenState extends State<CartScreen> {
                 }, 
                 icon: Icon(Icons.notifications_none))
             ],
-      ),
-      body: 
-      
-        Column(
-          children: [
-            _buildSingleCartProduct(),
-            _buildSingleCartProduct(),
-            _buildSingleCartProduct()
-          ],
-        ),
-    );
+      );
+  }
+
+  _buildCartItem()
+  {
+     return Container(
+                  height: 100,
+                  width: 100,
+                  color: Colors.grey[900],
+                  margin: EdgeInsets.all(4.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 100,
+                        color: Colors.grey[600],
+                      ),
+                      SizedBox(width: 16,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Title",style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                          Expanded(
+                            child: Text("Description",style: TextStyle(
+                                            color: Colors.white,)),
+                          ),
+                          Text("\999",style: TextStyle(
+                                          color: Colors.white,
+                                         )),
+                        ],
+                      ),
+                      Spacer(),
+                      Row(
+                        children: [
+                          Container(
+                            child: Icon(Icons.remove, color: Colors.white,),
+                          ),
+                           Container(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text("2", style: TextStyle(color: Colors.white,),),
+                          ),
+                           Container(
+                             
+                            child: Icon(Icons.add, color: Colors.white,),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                );
+  }
+
+  Positioned _buildBottom(){
+    return  Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              
+              padding: const EdgeInsets.only(left: 30, right: 30, bottom: 10, top: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
+                color: Colors.grey[700],
+              ),
+              child: Column(
+                      children: [
+                       Padding(
+                         padding: const EdgeInsets.only(top:18.0),
+                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          
+                          children:[
+                              Text("Subtotal",style: TextStyle(
+                                
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold)),
+                              Text("Rs. ${_totalPrice}" ,style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0
+                                            )),
+                              
+                          ]
+                         ),
+                       ),
+                       SizedBox(height: 16,),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                    primary: Color(0xffE57734),
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                     
+                                    ),
+                                  ),
+                              
+                                onPressed: (){}, 
+                                child: Text("Checkout", style: TextStyle(fontSize: 16),),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 9,),
+                        // Row(
+                        //   children: [
+                        //     Expanded(
+                        //       child: ElevatedButton(
+                        //         style: ElevatedButton.styleFrom(
+                        //           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                        //           primary: Colors.transparent,
+                        //           elevation: 0,
+                        //           shape: RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.circular(8),
+                        //             side: BorderSide(
+                        //               color: Colors.white
+                        //             )
+                        //           ),
+                        //         ),
+                        //         onPressed: (){}, 
+                        //         child: Text("Checkout with Paypal", 
+                        //           style: TextStyle(
+                        //             color: Colors.white,
+                        //           )),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        SizedBox(height: 16,),
+                        // Text("Continue Shopping", style: TextStyle(color: Colors.white),)
+                      ],
+                    ),
+            ),
+                  
+            );
+          
   }
 }
