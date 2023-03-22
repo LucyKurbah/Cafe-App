@@ -2,6 +2,7 @@ import 'package:cafe_app/models/Table.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../api/apiFile.dart';
+import '../models/AddOn.dart';
 import '../models/Product.dart';
 import '../models/Cart.dart';
 import 'api_response.dart';
@@ -89,6 +90,45 @@ Future<ApiResponse> addToCart(Product product) async{
   return apiResponse;
 }
 
+Future<ApiResponse> addItemToCart(AddOn item) async{
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    int userId = await getUserId();
+
+    final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer $token'
+                },
+                body:{
+                        'user_id': userId.toString(),
+                        'item_id' : item.id.toString(),
+                        'item_price' : item.price.toString(),
+                        'item_quantity' : "1",
+                        'flag' : 'I'
+                    },   
+               );
+    switch(response.statusCode)
+    {
+      case 200:
+        apiResponse.data =  "Added to cart";
+        print(apiResponse.data);
+        break;
+      case 401:
+        apiResponse.error = ApiConstants.unauthorized;
+        break;
+      default:
+         apiResponse.error = response.statusCode.toString();
+        break;
+    }
+  } catch (e) {
+     apiResponse.error =e.toString();
+  }
+
+  return apiResponse;
+}
+
 Future<ApiResponse> addTableToCart(TableModel table, String totalPrice, String date, String timeFrom, String timeTo) async{
   ApiResponse apiResponse = ApiResponse();
   try {
@@ -110,24 +150,23 @@ Future<ApiResponse> addTableToCart(TableModel table, String totalPrice, String d
                         'flag': 'T'
                     },   
                );
-
     switch(response.statusCode)
     {
       case 200:
-      apiResponse.data =  "Added to cart";
-       print(apiResponse.data);
+      
+        apiResponse.data =  "Added to cart";
+        print(apiResponse.data);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;
         break;
       default:
-         apiResponse.error = response.statusCode.toString();
+        apiResponse.error = response.statusCode.toString();
         break;
     }
   } catch (e) {
      apiResponse.error =e.toString();
   }
-
   return apiResponse;
 }
 
