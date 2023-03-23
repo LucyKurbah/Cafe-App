@@ -120,44 +120,7 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
     final newCart = Provider.of<HomeController>(context);
     return Scaffold(
       backgroundColor: Colors.grey[900],
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right:20.0),
-            child: Center(
-              child: Badge(
-                badgeStyle: BadgeStyle(
-                  badgeColor: Color(0xffe57734)
-                ),
-                badgeContent: Consumer<HomeController>(
-                  builder: (context, value,child) { 
-                    return Text(value.getCounter().toString(), style: TextStyle(color: Colors.white));
-                   },
-                
-                ),
-                child:  IconButton(
-                            icon: Icon(Icons.shopping_bag_outlined, size: 30,), 
-                            color: Colors.white,
-                            onPressed: () { 
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
-                            },
-                        ),
-              ),
-            ),
-          )
-          // IconBtnWithCounter(
-          //   svgSrc: "Assets/Images/cart.svg",
-          //   press:() {},
-          //  ),
-          //  IconBtnWithCounter(
-          //   svgSrc: "Assets/Images/bell.svg",
-          //   numOfItems: 3,
-          //   press:() {},
-          //  ),
-        ],
-      ),
-     
+       appBar: _buildAppBar(),
       body: RefreshIndicator(
         onRefresh: (){
           return retrieveItems();
@@ -178,15 +141,13 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                               AnimatedPositioned(
                                 duration: const Duration(milliseconds: 500),
                                   top: controller.homeState == HomeState.normal
-                                    ? 85
+                                    ? 10
                                     : -(constraints.maxHeight -
                                         100 * 2 -
-                                        85),
+                                        50),
                                   left: 0,
                                   right: 0,
-                                  height: constraints.maxHeight -
-                                    85 -
-                                    100,
+                                  height: constraints.maxHeight-30 ,
                                   
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -203,8 +164,8 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                     itemCount:  _productList.length,
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      childAspectRatio: 0.8,
+                                      crossAxisCount: 1,
+                                       childAspectRatio: 4,
                                       mainAxisSpacing: 10,
                                       crossAxisSpacing: 10,
                                     ),
@@ -223,33 +184,33 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                 ),
                               ),
                               // Card Panel
-                              AnimatedPositioned(
-                                duration: const Duration(milliseconds: 500),
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height: controller.homeState == HomeState.normal
-                                    ? 100
-                                    : (constraints.maxHeight - 100),
-                                child: GestureDetector(
-                                  onVerticalDragUpdate: _onVerticalGesture,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(20),
+                              // AnimatedPositioned(
+                              //   duration: const Duration(milliseconds: 500),
+                              //   bottom: 0,
+                              //   left: 0,
+                              //   right: 0,
+                              //   height: controller.homeState == HomeState.normal
+                              //       ? 100
+                              //       : (constraints.maxHeight - 100),
+                              //   child: GestureDetector(
+                              //     onVerticalDragUpdate: _onVerticalGesture,
+                              //     child: Container(
+                              //       padding: const EdgeInsets.all(20),
                                   
-                                    decoration: const BoxDecoration(
-                                            color: Colors.white24,
-                                            borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
-                                    ),
-                                    alignment: Alignment.topLeft,
-                                    child: AnimatedSwitcher(
-                                      duration: const Duration(milliseconds: 500),
-                                      child: controller.homeState == HomeState.normal
-                                          ? CardShortView(controller: controller)
-                                          : CartDetailsView(controller: controller),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              //       decoration: const BoxDecoration(
+                              //               color: Colors.white24,
+                              //               borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                              //       ),
+                              //       alignment: Alignment.topLeft,
+                              //       child: AnimatedSwitcher(
+                              //         duration: const Duration(milliseconds: 500),
+                              //         child: controller.homeState == HomeState.normal
+                              //             ? CardShortView(controller: controller)
+                              //             : CartDetailsView(controller: controller),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           );
                         },
@@ -261,4 +222,24 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
     )
     );
   }
+   _buildAppBar(){
+    return AppBar(
+        backgroundColor: Colors.black,
+        centerTitle: true,
+        title: Text("Add On Items", style: TextStyle(color: Colors.white),),
+        elevation: 0.0,
+        leading: IconButton(
+            onPressed: (){
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => Home()));
+            }, 
+            icon: Icon(Icons.arrow_back), color: Colors.white,),
+            actions: [
+              IconButton(
+                onPressed: (){
+                }, 
+                icon: Icon(Icons.notifications_none))
+            ],
+      );
+  }
+
 }

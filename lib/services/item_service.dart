@@ -9,6 +9,7 @@ Future<ApiResponse> getItems() async{
   ApiResponse apiResponse = ApiResponse();
   try {
         final response = await http.post(Uri.parse(ApiConstants.getAddOnUrl),headers: {'Accept' : 'application/json',});
+        
         switch(response.statusCode)
         {
           case 200:

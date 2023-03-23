@@ -10,6 +10,7 @@ import '../services/cart_service.dart';
 import '../services/user_service.dart';
 import '../services/table_service.dart';
 import 'cartscreen.dart';
+import 'addOn_page.dart';
 import 'package:badges/badges.dart';
 import 'package:intl/intl.dart';
 
@@ -41,21 +42,23 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
 
 
   void _updateSecondTimePicker(TimeOfDay newTime) {
+    print("Checking the Time to");
+    print(newTime);
     if (timeFrom != null && newTime != null && newTime.hour < timeFrom!.hour) {
       showSnackBar(
           title: 'Invalid Time',
           message: 'Please enter a time after ${timeFrom!.format(context)}');
       newTime = TimeOfDay(hour: timeFrom!.hour, minute: newTime.minute);
     }
-    if (timeFrom != null &&
-        newTime != null &&
-        newTime.hour == timeFrom!.hour &&
-        newTime.minute < timeFrom!.minute) {
-      newTime = TimeOfDay(hour: timeFrom!.hour, minute: timeFrom!.minute);
+    if (timeFrom != null && newTime != null && newTime.hour == timeFrom!.hour &&
+        newTime.minute < timeFrom!.minute) 
+    {
+    
+        newTime = TimeOfDay(hour: timeFrom!.hour, minute: timeFrom!.minute);
     }
     DateTime parsedTime =
-        DateFormat.Hm().parse(newTime.format(context).toString());
-
+        DateFormat.jm().parse(newTime.format(context).toString());
+    print(parsedTime);
     String formattedTime = DateFormat('h:mm a').format(parsedTime);
 
     setState(() {
@@ -78,6 +81,10 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
         _cartMessage = response.data.toString();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
         _loading = _loading ? !_loading : _loading;
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);
       });
     }
     else if(response.error == ApiConstants.unauthorized){
@@ -208,9 +215,9 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                                     color: Colors.white),
                                               ),
                                               icon: Icon(
-                                                  Icons.calendar_month_sharp,
+                                                  Icons.timelapse_outlined,
                                                   color: Colors.white),
-                                              labelText: "Select Time",
+                                              labelText: "From",
                                               labelStyle: TextStyle(
                                                   color: Colors.white),
                                             ),
@@ -235,7 +242,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                               if (timeFrom != null) {
                                                 try {
                                                   DateTime parsedTime =
-                                                      DateFormat.Hm().parse(
+                                                      DateFormat.jm().parse(
                                                           timeFrom!
                                                               .format(context)
                                                               .toString());
@@ -266,9 +273,9 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                                     color: Colors.white),
                                               ),
                                               icon: Icon(
-                                                  Icons.calendar_month_sharp,
+                                                  Icons.timelapse_outlined,
                                                   color: Colors.white),
-                                              labelText: "Select Time",
+                                              labelText: "To",
                                               labelStyle: TextStyle(
                                                   color: Colors.white),
                                             ),
@@ -403,26 +410,28 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
 
   void checkDateTimeAvailability(table_id, String timeFrom, String timeTo)  async {
    
-    ApiResponse response = await getTableDetails(table_id, timeFrom, timeTo, _date.text);
+   Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => AddOnPage()), (route) => false);
+    // ApiResponse response = await getTableDetails(table_id, timeFrom, timeTo, _date.text);
     
-    if (response.error == null) {
-      print(response.data);
-      print("Hello");
-      if(response.data != null)
-      {
-        print("Time and date available");
-        //Show the add to cart button
-      }
-      else{
-        showSnackBar(title: '',message: 'The Time slot is not available');
-      }
-    } else if (response.error == ApiConstants.unauthorized) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => Login()), (route) => false);
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('${response.error}')));
-    }
+    // if (response.error == null) {
+    //   print(response.data);
+    //   print("Hello");
+    //   if(response.data != null)
+    //   {
+    //     print("Time and date available");
+    //     //Show the add to cart button
+    //   }
+    //   else{
+    //     showSnackBar(title: '',message: 'The Time slot is not available');
+    //   }
+    // } else if (response.error == ApiConstants.unauthorized) {
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //       MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    // } else {
+    //   ScaffoldMessenger.of(context)
+    //       .showSnackBar(SnackBar(content: Text('${response.error}')));
+    // }
   }
 
    void calculateHours(String timeString1, String timeString2) {
