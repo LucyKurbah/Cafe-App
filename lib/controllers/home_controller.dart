@@ -43,6 +43,8 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+
   void addTableToCart(TableModel table) {
    
     for (TableItem item in cartTable) {

@@ -39,6 +39,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
   int userId = 0;
   bool _loading = true;
   String _cartMessage = '';
+  bool checkTable =false;
 
 
   void _updateSecondTimePicker(TimeOfDay newTime) {
@@ -343,8 +344,11 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                           ) 
                               : SizedBox.shrink(),
                               SizedBox(height:10),
-                              noOfHours.text.isNotEmpty ?Center(
-                                child: Container(
+                              if(checkTable)
+                              noOfHours.text.isNotEmpty?Center(
+                                child: 
+                                
+                                    Container(
                                       padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
                                       decoration: BoxDecoration(
                                         color: Color.fromARGB(255, 50, 54, 56),
@@ -360,7 +364,9 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                                         }
                                                       )
                                     ),
-                              ):SizedBox.shrink(),
+                              )
+                              :
+                              SizedBox.shrink(),
                            
                           ],
                         ),
@@ -410,28 +416,42 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
 
   void checkDateTimeAvailability(table_id, String timeFrom, String timeTo)  async {
    
-   Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => AddOnPage()), (route) => false);
-    // ApiResponse response = await getTableDetails(table_id, timeFrom, timeTo, _date.text);
+  
+    ApiResponse response = await getTableDetails(table_id, timeFrom, timeTo, _date.text);
     
-    // if (response.error == null) {
-    //   print(response.data);
-    //   print("Hello");
-    //   if(response.data != null)
-    //   {
-    //     print("Time and date available");
-    //     //Show the add to cart button
-    //   }
-    //   else{
-    //     showSnackBar(title: '',message: 'The Time slot is not available');
-    //   }
-    // } else if (response.error == ApiConstants.unauthorized) {
-    //   Navigator.of(context).pushAndRemoveUntil(
-    //       MaterialPageRoute(builder: (context) => Login()), (route) => false);
-    // } else {
-    //   ScaffoldMessenger.of(context)
-    //       .showSnackBar(SnackBar(content: Text('${response.error}')));
-    // }
+    if (response.error == null) {
+      if(response.data != null)
+      {
+        if(response.data.toString()=="VE")
+        {
+          print("Validation Error");
+          checkTable=false;
+        }
+        else if(response.data.toString()=="300")
+        {
+            print("Time and date available");
+            checkTable=true;
+        }
+        else if(response.data.toString()=="200")
+        {
+            print("Time and date not available");
+            checkTable=false;
+        }
+      
+      }
+      else{
+        showSnackBar(title: '',message: 'The Time slot is not available');
+         checkTable=false;
+      }
+    } else if (response.error == ApiConstants.unauthorized) {
+       checkTable=false;
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    } else {
+       checkTable=false;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
+    }
   }
 
    void calculateHours(String timeString1, String timeString2) {

@@ -1,7 +1,6 @@
-// import 'package:cafe_app/screens/single_table_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:cafe_app/screens/menu.dart';
 import 'package:provider/provider.dart';
@@ -22,12 +21,12 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   playSound: true
 );
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    // await Firebase.initializeApp();
-    print("Message : ${message.messageId}");
-}
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//     // await Firebase.initializeApp();
+//     print("Message : ${message.messageId}");
+// }
 
 
 Future main() async{
@@ -62,7 +61,7 @@ class _MyAppState extends State<MyApp> {
 
     // FirebaseMessaging.instance.getInitialMessage();
 
-    //Foreground
+    // //Foreground
     // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     //   RemoteNotification? notification = message.notification;
     //   AndroidNotification? android = message.notification?.android;
@@ -70,12 +69,7 @@ class _MyAppState extends State<MyApp> {
     //   {
     //     print(message.notification!.body);
     //     print(message.notification!.title);
-    //     // flutterLocalNotificationsPlugin.show(notification.hashCode, 
-    //     // notification.title, notification.body,
-    //     // NotificationDetails(
-    //     //   android: AndroidNotificationDetails(
-    //     //     channel.id, channel.name,color: Colors.blue, playSound: true)
-    //     // ));  
+        
     //   }
       
     // });

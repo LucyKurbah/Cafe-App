@@ -259,13 +259,10 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                                     ),
                                     itemBuilder: (context, index) => ProductCard(
                                       product: _productList[index],
-                                      press: () {
-                                        
+                                      press: () {                                       
                                               controller.addProductToCart(_productList[index]);
                                               addCart(_productList[index]);
-                                              _cartTag = '_cartTag';
-
-                                            
+                                              _cartTag = '_cartTag';                                           
                                       }                                       
                                     ),
                                   ),

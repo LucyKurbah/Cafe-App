@@ -95,7 +95,7 @@ Future<ApiResponse> addItemToCart(AddOn item) async{
   try {
     String token = await getToken();
     int userId = await getUserId();
-
+  
     final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
                 headers: {
                     'Accept' : 'application/json',

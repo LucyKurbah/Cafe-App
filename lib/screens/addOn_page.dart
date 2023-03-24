@@ -17,6 +17,7 @@ import 'package:cafe_app/api/apiFile.dart';
 import 'package:cafe_app/models/AddOn.dart';
 import 'package:cafe_app/screens/cartscreen.dart';
 import 'package:get/get.dart';
+import '../../../constraints/constants.dart';
 
 
 class AddOnPage extends StatefulWidget {
@@ -64,7 +65,6 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
   }
 
   Future<void> retrieveItems() async{
-
     ApiResponse response = await getItems();
     if(response.error == null)
     {
@@ -101,19 +101,17 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
       });
     }
     else if(response.error == ApiConstants.unauthorized){
-          logoutUser();
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                                                      builder: (context) => Login()
-                                                                ), 
-                                                (route) => false);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error occurred")));
+          // logoutUser();
+          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+          //                                             builder: (context) => Login()
+          //                                                       ), 
+          //                                       (route) => false);
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -172,45 +170,38 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                     itemBuilder: (context, index) => AddOnCard(
                                       product: _productList[index],
                                       press: () {
-                                        
-                                              controller.addProductToCart(_productList[index]);
+                                              // controller.addProductToCart(_productList[index]);
                                               addCart(_productList[index]);
-                                              _cartTag = '_cartTag';
-
-                                            
+                                              _cartTag = '_cartTag';                                           
                                       }                                       
                                     ),
                                   ),
                                 ),
                               ),
                               // Card Panel
-                              // AnimatedPositioned(
-                              //   duration: const Duration(milliseconds: 500),
-                              //   bottom: 0,
-                              //   left: 0,
-                              //   right: 0,
-                              //   height: controller.homeState == HomeState.normal
-                              //       ? 100
-                              //       : (constraints.maxHeight - 100),
-                              //   child: GestureDetector(
-                              //     onVerticalDragUpdate: _onVerticalGesture,
-                              //     child: Container(
-                              //       padding: const EdgeInsets.all(20),
-                                  
-                              //       decoration: const BoxDecoration(
-                              //               color: Colors.white24,
-                              //               borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
-                              //       ),
-                              //       alignment: Alignment.topLeft,
-                              //       child: AnimatedSwitcher(
-                              //         duration: const Duration(milliseconds: 500),
-                              //         child: controller.homeState == HomeState.normal
-                              //             ? CardShortView(controller: controller)
-                              //             : CartDetailsView(controller: controller),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 500),
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height: 80,                                  
+                                child: Container(
+                                  padding: const EdgeInsets.all(20),                                 
+                                  decoration: const BoxDecoration(
+                                          color: Colors.white24,
+                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                                  ),
+                                  alignment: Alignment.center,
+                                  child:Row(
+                                        children: [
+                                          Text("1", style: TextStyle(color: Colors.white),),
+                                          Text(" Add On", style: TextStyle(color: Colors.white),),
+                                          Expanded(child: Container()), 
+                                          Text("Next", style: TextStyle(color: Colors.white),)
+                                        ],
+                                    )
+                                ),
+                              ),
                             ],
                           );
                         },

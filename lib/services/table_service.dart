@@ -42,11 +42,20 @@ Future<ApiResponse> getTables() async{
 
   return apiResponse;
 }
-  convertDateToPostgres(bookDate){
+convertDateToPostgres(bookDate){
     DateTime date = DateFormat('dd-MM-yyyy').parse(bookDate);
     String formattedDate = '${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     return formattedDate;
   }
+
+convertTimeToPostgres(time,bookDate){
+    DateTime date = DateFormat('dd-MM-yyyy').parse(bookDate);
+    DateTime ptime = DateFormat.jm().parse(time);
+    DateTime postgresDateTime = DateTime(date.year, date.month, date.day, ptime.hour, ptime.minute, ptime.second);
+    return postgresDateTime.toString();
+  }
+
+
 Future<ApiResponse> getTableDetails(table_id, timeFrom, timeTo, bookDate) async{
   
   ApiResponse apiResponse = ApiResponse();
@@ -54,25 +63,28 @@ Future<ApiResponse> getTableDetails(table_id, timeFrom, timeTo, bookDate) async{
     String token = await getToken();
     int userId = await getUserId();
     String formattedDate=convertDateToPostgres(bookDate);
-  
+    String time_from = (convertTimeToPostgres(timeFrom,bookDate));
+    String time_to = (convertTimeToPostgres(timeTo,bookDate));
+
     final response = await http.post(Uri.parse(ApiConstants.getTableDetailsUrl),
                 headers: {
                     'Accept' : 'application/json',
                     'Authorization' : 'Bearer $token'
                 },
                 body: {
-                      'userId': userId.toString(),
+                      'user_id': userId.toString(),
                       'table_id': table_id.toString(),
-                      'timeFrom' : timeFrom,
-                      'timeTo' : timeTo,
+                      'timeFrom' : time_from,
+                      'timeTo' : time_to,
                       'bookDate' : formattedDate.toString()
                     },
                );
-              
+   
     switch(response.statusCode)
     {
       case 200:
-        apiResponse.data =  jsonDecode(response.body).map((p) => OrderModel.fromJson(p)).toList();
+        print(response.body);
+        apiResponse.data =  jsonDecode(response.body);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;

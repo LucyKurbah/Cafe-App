@@ -6,7 +6,8 @@ class OrderModel{
     OrderModel({required this.table_id, required this.user_id, required this.order_status_id, required this.payment_id, required this.time_from, required this.time_to, required this.book_date});
 
 factory OrderModel.fromJson(Map<String, dynamic> json){
-
+    print("json");
+    print(json[0]);
     return OrderModel(
       table_id : json['table_id'],
       user_id : json['user_id'],
