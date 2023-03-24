@@ -1,0 +1,48 @@
+ public function getTableOrderDetails(Request $request)
+  {
+
+    $validator = Validator::make($request->all(), [
+      'user_id' => 'required',
+      'table_id' => 'required',
+      'timeFrom' => 'required',
+      'timeTo' => 'required',
+      'bookDate' => 'required',
+    ]);
+    if($validator->fails()){
+      return response()->json("VE")->withHeaders([
+        'Cache-Control' => 'max-age=15, public',
+        'Expires' => gmdate('D, d M Y H:i:s', time() + 15) . ' IST',
+        'Vary' => 'Accept-Encoding',
+      ]);
+    }
+    else {
+      $user_id = $this->normalizeString($request->user_id);
+      $sql_check = DB::SELECT('SELECT t_o.table_id,o.user_id,os.id as order_status_id,p.id as payment_id,t_o.table_time_from as time_from,t_o.table_time_to as time_to,t_o.table_date as book_date
+                              FROM public.table_order t_o
+                              INNER JOIN public.order o on o.id = t_o.order_id
+                              INNER JOIN public.order_status os on os.id=o.order_status_id
+                              INNER JOIN public.payment p on p.id=o.payment_id
+                              WHERE t_o.table_id=? and t_o.table_date=? and t_o.table_time_from=? and t_o.table_time_to=? and o.user_id=?',
+                              array($request->table_id,$request->bookDate,$request->timeFrom,$request->timeTo,$request->user_id,));
+      if($sql_check)
+      {
+        return 200;
+        return response()->json(200)->withHeaders([
+          'Cache-Control' => 'max-age=15, public',
+          'Expires' => gmdate('D, d M Y H:i:s', time() + 15) . ' IST',
+          'Vary' => 'Accept-Encoding',
+          'ETag' => $etag,
+          ]);
+      }
+      else
+      {
+        return 300;
+        return response()->json(300)->withHeaders([
+          'Cache-Control' => 'max-age=15, public',
+          'Expires' => gmdate('D, d M Y H:i:s', time() + 15) . ' IST',
+          'Vary' => 'Accept-Encoding',
+          'ETag' => $etag,
+          ]);
+      }
+    }
+  }
