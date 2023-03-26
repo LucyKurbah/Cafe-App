@@ -188,11 +188,11 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                 child: Container(
                                   padding: const EdgeInsets.all(20),                                 
                                   decoration: const BoxDecoration(
-                                          color: Colors.white24,
+                                          color: Colors.grey,
                                           borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
                                   ),
                                   alignment: Alignment.center,
-                                  child:Row(
+                                  child: Row(
                                         children: [
                                           Text("1", style: TextStyle(color: Colors.white),),
                                           Text(" Add On", style: TextStyle(color: Colors.white),),

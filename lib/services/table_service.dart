@@ -72,14 +72,14 @@ Future<ApiResponse> getTableDetails(table_id, timeFrom, timeTo, bookDate) async{
                     'Authorization' : 'Bearer $token'
                 },
                 body: {
-                      'user_id': userId.toString(),
                       'table_id': table_id.toString(),
                       'timeFrom' : time_from,
                       'timeTo' : time_to,
                       'bookDate' : formattedDate.toString()
                     },
                );
-   
+  print("Validate");
+   print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:

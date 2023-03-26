@@ -1,9 +1,10 @@
 class ApiConstants {
   static String aws_ip= "13.231.134.208";
   static String office_ip="10.179.2.187:8000";
-  static String home_ip="";
+  static String home_ip="192.168.29.48:8000";
+  static String bran_ip="192.168.1.51:8000";
 
-  static String right_now_ip=aws_ip;
+  static String right_now_ip=bran_ip;
 
   static String baseUrl = 'http://'+right_now_ip+'/api';
   static String ipUrl = 'http://10.179.2.187';
@@ -15,7 +16,7 @@ class ApiConstants {
   static String itemUrl = '$baseUrl/getFoodItems';
   static String getAddOnUrl = '$baseUrl/getAddOnItems';
   static String tableUrl = '$baseUrl/getTables';
-  static String getTableDetailsUrl = '$baseUrl/order/getTableOrderDetails';
+  static String getTableDetailsUrl = '$baseUrl/validateTable';
   static String getConferenceDetailsUrl = '$baseUrl/getConferenceDetails';
   static String cartUrl = '$baseUrl/cart/getCart';
   static String addCartUrl = '$baseUrl/cart/add';

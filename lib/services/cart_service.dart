@@ -103,6 +103,7 @@ Future<ApiResponse> addItemToCart(AddOn item) async{
                 },
                 body:{
                         'user_id': userId.toString(),
+                       
                         'item_id' : item.id.toString(),
                         'item_price' : item.price.toString(),
                         'item_quantity' : "1",
@@ -129,12 +130,50 @@ Future<ApiResponse> addItemToCart(AddOn item) async{
   return apiResponse;
 }
 
+Future<ApiResponse> removeItemFromCart(AddOn item) async{
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    int userId = await getUserId();
+  
+    final response = await http.post(Uri.parse(ApiConstants.removeCartUrl),
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer $token'
+                },
+                body:{
+                        'user_id': userId.toString(),
+                        'item_id' : item.id.toString(),
+                        'item_quantity' : "1",
+                        'flag' : 'I'
+                    },   
+               );
+    switch(response.statusCode)
+    {
+      case 200:
+        apiResponse.data =  "Removed From cart";
+        print(apiResponse.data);
+        break;
+      case 401:
+        apiResponse.error = ApiConstants.unauthorized;
+        break;
+      default:
+         apiResponse.error = response.statusCode.toString();
+        break;
+    }
+  } catch (e) {
+     apiResponse.error =e.toString();
+  }
+
+  return apiResponse;
+}
+
 Future<ApiResponse> addTableToCart(TableModel table, String totalPrice, String date, String timeFrom, String timeTo) async{
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
     int userId = await getUserId();
-
+   
     final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
                 headers: {
                     'Accept' : 'application/json',
@@ -144,17 +183,18 @@ Future<ApiResponse> addTableToCart(TableModel table, String totalPrice, String d
                         'user_id': userId.toString(),
                         'table_id' : table.id.toString(),
                         'table_price' : (totalPrice),
-                        'date' : date,
-                        'time_from' : timeFrom,
-                        'time_to' : timeTo,
+                        'table_date' : date,
+                        'table_time_from' : timeFrom,
+                        'table_time_to' : timeTo,
                         'flag': 'T'
                     },   
                );
+    print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:
-      
-        apiResponse.data =  "Added to cart";
+       apiResponse.data =  jsonDecode(response.body);
+        // apiResponse.data =  "Added to cart";
         print(apiResponse.data);
         break;
       case 401:
@@ -281,3 +321,4 @@ Future<ApiResponse> getTotal() async{
 
   return apiResponse;
 }
+

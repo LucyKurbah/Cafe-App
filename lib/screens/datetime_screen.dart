@@ -40,7 +40,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
   bool _loading = true;
   String _cartMessage = '';
   bool checkTable =false;
-
+  String t_date = '';
 
   void _updateSecondTimePicker(TimeOfDay newTime) {
     print("Checking the Time to");
@@ -68,25 +68,44 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
       checkDateTimeAvailability(widget.table.id, _selectedtimeFrom.text, formattedTime);
     });
   }
+convertTimeToPostgres(time,bookDate){
+    DateTime date = DateFormat('yyyy-MM-dd').parse(bookDate);
+    DateTime ptime = DateFormat.jm().parse(time);
+    DateTime postgresDateTime = DateTime(date.year, date.month, date.day, ptime.hour, ptime.minute, ptime.second);
+    return postgresDateTime.toString();
+  }
 
   
   Future<void> addCart(TableModel table, String totalPrice, String date, String timeFrom, String timeTo) async{
     userId = await getUserId();
 
-    ApiResponse response = await addTableToCart(table, totalPrice, date, timeFrom, timeTo);
+    DateTime time_from = DateFormat('h:mm a').parse(timeFrom);
+    DateTime time_to = DateFormat('h:mm a').parse(timeTo);
+    String bookDate =convertTimeToPostgres(timeFrom,date);
+
+    ApiResponse response = await addTableToCart(table, totalPrice, bookDate, time_from.toString(), time_to.toString());
+
     if(response.error == null)
     {
-      setState(() {
-        //add the counter here
-        //incrementCount();
-        _cartMessage = response.data.toString();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
-        _loading = _loading ? !_loading : _loading;
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                                                      builder: (context) => Login()
-                                                                ), 
-                                                (route) => false);
-      });
+      if(response.data==200)
+      {
+          setState(() {
+            //add the counter here
+            //incrementCount();
+            _cartMessage = "Table added to Cart";
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+            _loading = _loading ? !_loading : _loading;
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                          builder: (context) => AddOnPage()
+                                                                    ), 
+                                                    (route) => false);
+          });
+      }
+      else if(response.data=="X")
+      {
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Table is not available for the selected time")));
+      }
+     
     }
     else if(response.error == ApiConstants.unauthorized){
           logoutUser();
@@ -194,9 +213,8 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                                 lastDate: DateTime(2024));
                                         if (pickeddate != null) {
                                           setState(() {
-                                            _date.text =
-                                                DateFormat('dd-MM-yyyy')
-                                                    .format(pickeddate);
+                                            _date.text = DateFormat('dd-MM-yyyy').format(pickeddate);
+                                            t_date = DateFormat('yyyy-MM-dd').format(pickeddate);
                                           });
                                         }
                                       },
@@ -344,25 +362,35 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                           ) 
                               : SizedBox.shrink(),
                               SizedBox(height:10),
-                              if(checkTable)
+
                               noOfHours.text.isNotEmpty?Center(
                                 child: 
-                                
-                                    Container(
-                                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                                      decoration: BoxDecoration(
-                                        color: Color.fromARGB(255, 50, 54, 56),
-                                        borderRadius: BorderRadius.circular(18)
-                                      ),
-                                     
+                                    Container(          
+                                      alignment: Alignment.center,
                                       child:
-                                              TextButton(
-                                                      child: Text('Add to Cart', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                                                      onPressed:  (){
-                                                        // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
-                                                         addCart(widget.table, noOfHours.text, _date.toString(), _selectedtimeFrom.toString(), _selectedtimeTo.toString());
-                                                        }
-                                                      )
+                                      // (checkTable)?
+                                              StatefulBuilder(
+                                                builder: (context, setState) {
+                                                  return ElevatedButton(                                                  
+                                                         style: ButtonStyle(                                                           
+                                                             backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 50, 54, 56)),
+                                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(18.0),
+                                                                  ),                                                              
+                                                                ),                                                               
+                                                          ),                                                                                                                        
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                                                            child: Text('Add to Cart', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                                                          ),
+                                                          onPressed:  (){
+                                                            // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
+                                                             addCart(widget.table, noOfHours.text, t_date, _selectedtimeFrom.text.toString(), _selectedtimeTo.text.toString());
+                                                            },
+                                                          );
+                                                }
+                                              )
                                     ),
                               )
                               :
@@ -415,10 +443,9 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
   }
 
   void checkDateTimeAvailability(table_id, String timeFrom, String timeTo)  async {
-   
-  
-    ApiResponse response = await getTableDetails(table_id, timeFrom, timeTo, _date.text);
-    
+     ApiResponse response = await getTableDetails(table_id, timeFrom, timeTo, _date.text);
+    print("Check");
+    print(response.data);
     if (response.error == null) {
       if(response.data != null)
       {
@@ -427,17 +454,19 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
           print("Validation Error");
           checkTable=false;
         }
-        else if(response.data.toString()=="300")
+        else if(response.data==200)
         {
             print("Time and date available");
-            checkTable=true;
+            // setState(() {
+            //    checkTable=true;
+            // });
+           
         }
-        else if(response.data.toString()=="200")
+        else if(response.data==300)
         {
             print("Time and date not available");
             checkTable=false;
         }
-      
       }
       else{
         showSnackBar(title: '',message: 'The Time slot is not available');

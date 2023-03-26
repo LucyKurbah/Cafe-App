@@ -187,43 +187,43 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                         builder: (context, BoxConstraints constraints) {
                           return Stack(
                             children: [          
-                              AnimatedPositioned(
-                                  duration: Duration(milliseconds: 500),
-                                  top: 10,
-                                  left: 0,
-                                    right: 0,
-                                    child: Container(
-                                      color: Colors.black,
-                                      child: TabBar(
-                                                    padding: EdgeInsets.only(left:13, right: 10),
-                                                    controller: _tabController,
-                                                    isScrollable: true,
-                                                    // indicator: CircleTabIndicator(color: Color(0xffd17842), radius: 4),
-                                                    indicator: const UnderlineTabIndicator(
-                                                      borderSide: BorderSide(
-                                                        width: 3,
-                                                        color: Color(0xffE57734)
-                                                      ),
-                                                      insets: EdgeInsets.symmetric(horizontal: 16)
-                                                    ),
-                                                    labelColor: Color(0xffd17842),
-                                                    labelStyle: TextStyle(
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: 16
-                                                    ),
-                                                    unselectedLabelColor: Colors.white.withOpacity(0.5),
-                                                      tabs:[
-                                                        Tab(text: "All",),
-                                                        Tab(text: "Starters",),
-                                                        Tab(text: "Main Course",),
-                                                        Tab(text: "Desserts",),
-                                                        Tab(text: "Beverages",),
-                                                        Tab(text: "Desserts",),
-                                                        Tab(text: "Beverages",),
-                                                      ]
-                                              ),
-                                    ),
-                              ),               
+                              // AnimatedPositioned(
+                              //     duration: Duration(milliseconds: 500),
+                              //     top: 10,
+                              //     left: 0,
+                              //       right: 0,
+                              //       child: Container(
+                              //         color: Colors.black,
+                              //         child: TabBar(
+                              //                       padding: EdgeInsets.only(left:13, right: 10),
+                              //                       controller: _tabController,
+                              //                       isScrollable: true,
+                              //                       // indicator: CircleTabIndicator(color: Color(0xffd17842), radius: 4),
+                              //                       indicator: const UnderlineTabIndicator(
+                              //                         borderSide: BorderSide(
+                              //                           width: 3,
+                              //                           color: Color(0xffE57734)
+                              //                         ),
+                              //                         insets: EdgeInsets.symmetric(horizontal: 16)
+                              //                       ),
+                              //                       labelColor: Color(0xffd17842),
+                              //                       labelStyle: TextStyle(
+                              //                         fontWeight: FontWeight.w500,
+                              //                         fontSize: 16
+                              //                       ),
+                              //                       unselectedLabelColor: Colors.white.withOpacity(0.5),
+                              //                         tabs:[
+                              //                           Tab(text: "All",),
+                              //                           Tab(text: "Starters",),
+                              //                           Tab(text: "Main Course",),
+                              //                           Tab(text: "Desserts",),
+                              //                           Tab(text: "Beverages",),
+                              //                           Tab(text: "Desserts",),
+                              //                           Tab(text: "Beverages",),
+                              //                         ]
+                              //                 ),
+                              //       ),
+                              // ),               
                               AnimatedPositioned(
                                 duration: const Duration(milliseconds: 500),
                                   top: controller.homeState == HomeState.normal

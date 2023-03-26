@@ -38,7 +38,28 @@ class _AddOnCardState extends State<AddOnCard> {
     {
       setState(() {
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Success")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Added")));
+
+      });
+    }
+    else if(response.error == ApiConstants.unauthorized){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error occurred")));
+                                          
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
+
+   Future<void> removeCart(AddOn item) async{
+    userId = await getUserId();
+
+    ApiResponse response = await removeItemFromCart(item);
+    if(response.error == null)
+    {
+      setState(() {
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Removed")));
 
       });
     }
@@ -59,7 +80,10 @@ class _AddOnCardState extends State<AddOnCard> {
       onTap: (){
          setState(() {
           checkedValue = !checkedValue;
-          addCart(widget.product);
+          if(checkedValue)
+            addCart(widget.product);
+          else
+            removeCart(widget.product);
         });
       },
        child: Container(
@@ -102,88 +126,92 @@ class _AddOnCardState extends State<AddOnCard> {
                   .textTheme
                   .subtitle1!
                   .copyWith(fontSize: 13, color: Colors.white),),
-                  
               ],
             ),
-            Expanded(child: Container()), 
             if(checkedValue)
-                  SizedBox(width: 50,),
-            if(checkedValue)
-                  Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              GestureDetector(
-                                                child: Text('- ',style: TextStyle(fontSize: 30, color: Colors.white),),
-                                                onTap:(){
-                                                  // addItemToCart(widget.product.id);
-                                                }
-                                              ),
-                                              SizedBox(width: 5,),
-                                              Text("1",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.white
-                                                ),
-                                              ),
-                                              SizedBox(width: 5,),
-                                              GestureDetector(
-                                                child: Icon(Icons.add, color: Colors.white),
-                                                onTap: (){
-                                                  // removeItemsFromCart(widget.product.id);
-                                                },
-                    ), ],),
-            
-            Expanded(child: Container()), 
+                  SizedBox(width: 20,),
           // this will fill up any remaining space
-            Align(
-              alignment: Alignment.centerRight,
-              child: Container(
-                        child: 
-                        Transform.scale(
-                          scale: 1.5,
-                          child: Theme(
-                            data: ThemeData(
-                                checkboxTheme: CheckboxThemeData(
-                                  shape: CircleBorder(),
-                                  checkColor: MaterialStateProperty.all<Color>(Colors.white),
-                                    fillColor: MaterialStateProperty.resolveWith<Color?>(
-                                        (Set<MaterialState> states) {
-                                          if (states.contains(MaterialState.selected)) {
-                                            return Colors.grey[800];
-                                          } else {
-                                            return Colors.grey;
-                                      } }, ),
-                                  splashRadius: 10.0,
+            Expanded(child: Container()), 
+            Column(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                          child: 
+                            Transform.scale(
+                              scale: 1.5,
+                              child: Theme(
+                                data: ThemeData(
+                                    checkboxTheme: CheckboxThemeData(
+                                      shape: CircleBorder(),
+                                      checkColor: MaterialStateProperty.all<Color>(Colors.white),
+                                        fillColor: MaterialStateProperty.resolveWith<Color?>(
+                                            (Set<MaterialState> states) {
+                                              if (states.contains(MaterialState.selected)) {
+                                                return Colors.grey[800];
+                                              } else {
+                                                return Colors.grey;
+                                          } }, ),
+                                      splashRadius: 10.0,
+                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      visualDensity: VisualDensity.compact,
+                                    ),                          
+                                  ),                          
+                                child: Checkbox(
                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  visualDensity: VisualDensity.compact,
-                                ),                          
-                              ),                          
-                            child: Checkbox(
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              tristate: false,
-                                value: checkedValue, 
-                                onChanged:(bool? newValue) {   
-                                setState(() {
-                                  checkedValue = newValue ?? false;
-                                  if (checkedValue) {
-                                    // addItemToCart();
-                                    addCart(widget.product);
-                                    print("Click");
-                                  }
-                                  else
-                                  {
-                                    //RemoveAllFrom Cart
-                                    print("object");
-                                  }
-                                });                                   
-                                }),
+                                  tristate: false,
+                                    value: checkedValue, 
+                                    onChanged:(bool? newValue) {   
+                                    setState(() {
+                                      checkedValue = newValue ?? false;
+                                      if (checkedValue) {
+                                        // addItemToCart();
+                                        addCart(widget.product);
+                                        print("Click");
+                                      }
+                                      else
+                                      {
+                                        //RemoveAllFrom Cart
+                                        removeCart(widget.product);
+                                        print("object");
+                                      }
+                                    });                                   
+                                    }),
+                              ),
+                            ),
                           ),
-                        ),
-                      )
+                ),
+                         if(checkedValue)
+                            Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: [
+                                                        GestureDetector(
+                                                          child: Text('- ',style: TextStyle(fontSize: 30, color: Colors.white),),
+                                                          onTap:(){
+                                                            // addItemToCart(widget.product.id);
+                                                          }
+                                                        ),
+                                                        SizedBox(width: 5,),
+                                                        Text("1",
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.white
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 5,),
+                                                        GestureDetector(
+                                                          child: Icon(Icons.add, color: Colors.white),
+                                                          onTap: (){
+                                                            // removeItemsFromCart(widget.product.id);
+                                                          },
+                              ), ],),
+                      
+              ],
             ),
           ],
         ),
+        
          ),
      );   
   }
