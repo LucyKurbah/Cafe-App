@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AddUserScreen extends StatefulWidget {
@@ -22,7 +22,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
           IconButton(
             onPressed: (){
                 final name = controller.text;
-                createUser(name: name);
+                // createUser(name: name);
             }, 
             icon: Icon(Icons.add))
         ],
@@ -30,11 +30,11 @@ class _AddUserScreenState extends State<AddUserScreen> {
     );
   }
   
-  Future createUser({required String name}) async {
-    final docUser = FirebaseFirestore.instance.collection('users').doc('12345');
-    final json ={
-      'name' : name
-    };
-    await docUser.set(json);
-  }
+  // Future createUser({required String name}) async {
+  //   final docUser = FirebaseFirestore.instance.collection('users').doc('12345');
+  //   final json ={
+  //     'name' : name
+  //   };
+  //   await docUser.set(json);
+  // }
 }

@@ -10,10 +10,13 @@ class FavBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: const Color(0xffE57734),
-      child: const Icon(Icons.add),
+    return Container(
+      padding: EdgeInsets.only(top:5,bottom: 5,left: 10, right: 10),
+      
+      color: const Color(0xffE57734),
+      child: 
+      // const Icon(Icons.add),
+      Text("Add", style: TextStyle(color: Colors.white),)
     );
   }
 }

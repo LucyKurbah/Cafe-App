@@ -256,7 +256,14 @@ class _TableCardState extends State<TableCard> with TickerProviderStateMixin{
                                               _cartTag = '_cartTag';
 
                                             
-                                      }                                       
+                                      },  
+                                      addItem:() {
+                                        
+                                      },
+                                       removeItem:() {
+                                        
+                                      },
+                                                                     
                                     ),
                                   ),
                                 ),

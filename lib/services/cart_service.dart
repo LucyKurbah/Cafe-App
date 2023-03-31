@@ -1,4 +1,5 @@
 import 'package:cafe_app/models/Table.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../api/apiFile.dart';
@@ -15,7 +16,6 @@ Future<ApiResponse> getCart() async{
  try {
     String token = await getToken();
     int userId = await getUserId();
-    print(userId);
     final response = await http.post(Uri.parse(ApiConstants.cartUrl),
                 headers: {
                     'Accept' : 'application/json',
@@ -25,11 +25,11 @@ Future<ApiResponse> getCart() async{
                        'user_id': userId.toString(),
                     },   
                );
- 
-    print(response.statusCode);
+   
     switch(response.statusCode)
     {
       case 200:
+        
         if(response.body =='305'){
           apiResponse.data = '';//User not logged in
         }
@@ -210,12 +210,64 @@ Future<ApiResponse> addTableToCart(TableModel table, String totalPrice, String d
   return apiResponse;
 }
 
+Future<ApiResponse> addConferenceToCart(String totalPrice, String date, String timeFrom, String timeTo) async{
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    int userId = await getUserId();
+   
+    final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer $token'
+                },
+                body:{
+                        'user_id': userId.toString(),
+                        'table_price' : (totalPrice),
+                        'table_date' : date,
+                        'table_time_from' : timeFrom,
+                        'table_time_to' : timeTo,
+                        'flag': 'C'
+                    },   
+               );
+    print(response.statusCode);
+    switch(response.statusCode)
+    {
+      case 200:
+       apiResponse.data =  jsonDecode(response.body);
+        // apiResponse.data =  "Added to cart";
+        print(apiResponse.data);
+        break;
+      case 401:
+        apiResponse.error = ApiConstants.unauthorized;
+        break;
+      default:
+        apiResponse.error = response.statusCode.toString();
+        break;
+    }
+  } catch (e) {
+     apiResponse.error =e.toString();
+  }
+  return apiResponse;
+}
+
 Future<ApiResponse> incrementCart(Cart cart) async{
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
     int userId = await getUserId();
-
+    String id='';
+    if(cart.flag.toString()=='F')
+    {
+      id='food_id';
+    }else if(cart.flag.toString()=='T')
+    {
+      id='table_id';
+    }
+    else
+    {
+      id='item_id';
+    }
     final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
                 headers: {
                     'Accept' : 'application/json',
@@ -223,9 +275,10 @@ Future<ApiResponse> incrementCart(Cart cart) async{
                 },
                 body:{
                        'user_id': userId.toString(),
-                        'id' : cart.item_id.toString(),
+                        id : cart.item_id.toString(),
                         'item_price' : cart.item_price.toString(),
-                        'quantity' : "1"
+                        'quantity' : "1",
+                        'flag': cart.flag.toString(),
                     },   
                );
     switch(response.statusCode)
@@ -252,6 +305,18 @@ Future<ApiResponse> decrementCart(Cart cart) async{
  try {
     String token = await getToken();
     int userId = await getUserId();
+    String id='';
+    if(cart.flag.toString()=='F')
+    {
+      id='food_id';
+    }else if(cart.flag.toString()=='T')
+    {
+      id='table_id';
+    }
+    else
+    {
+      id='item_id';
+    }
 
     final response = await http.post(Uri.parse(ApiConstants.removeCartUrl),
                 headers: {
@@ -260,9 +325,11 @@ Future<ApiResponse> decrementCart(Cart cart) async{
                 },
                 body:{
                         'user_id': userId.toString(),
-                        'item_id' : cart.item_id.toString(),
+                        id : cart.item_id.toString(),
                         'item_price' : cart.item_price.toString(),
-                        'quantity' : "1"
+                        'quantity' : "1",
+                        'flag' : cart.flag
+                        
                     },   
                );
     switch(response.statusCode)
@@ -306,7 +373,46 @@ Future<ApiResponse> getTotal() async{
     switch(response.statusCode)
     {
       case 200:
-        apiResponse.data =  jsonDecode(response.body);
+        apiResponse.data = (jsonDecode(response.body)) ;
+        
+        break;
+      case 401:
+        apiResponse.error = ApiConstants.unauthorized;
+        break;
+      default:
+         apiResponse.error = response.statusCode.toString();
+        break;
+    }
+  } catch (e) {
+     apiResponse.error =e.toString();
+  }
+
+  return apiResponse;
+}
+
+
+
+Future<ApiResponse> saveOrder(_cartList, totalPrice) async{
+  ApiResponse apiResponse = ApiResponse();
+ try {
+    String token = await getToken();
+    int userId = await getUserId();
+
+    final response = await http.post(Uri.parse(ApiConstants.getTotalUrl),
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer $token'
+                },
+                body:{
+                        'user_id': userId.toString(),
+                    },   
+               );
+
+    switch(response.statusCode)
+    {
+      case 200:
+        apiResponse.data = (jsonDecode(response.body)) ;
+        
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;

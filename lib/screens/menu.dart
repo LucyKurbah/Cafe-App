@@ -1,9 +1,12 @@
 import 'package:badges/badges.dart';
 import 'package:cafe_app/controllers/home_controller.dart';
 import 'package:cafe_app/db/db_helper.dart';
+import 'package:cafe_app/screens/addOn_page.dart';
+import 'package:cafe_app/screens/home/components/addOn_card.dart';
 import 'package:cafe_app/screens/home/components/product_card.dart';
 import 'package:cafe_app/screens/login.dart';
 import 'package:cafe_app/screens/home.dart';
+import 'package:cafe_app/services/item_service.dart';
 import 'package:cafe_app/services/product_service.dart';
 import 'package:cafe_app/services/cart_service.dart';
 import 'package:cafe_app/services/user_service.dart';
@@ -26,7 +29,7 @@ class MenuPage extends StatefulWidget {
   State<MenuPage> createState() => _MenuPageState();
 }
 
-class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
+class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin {
 
 
   DBHelper? dbHelper = DBHelper();
@@ -37,17 +40,21 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
   String _cartTag = "";
   int userId = 0;
   bool _loading = true;
+    bool _addOnVisible = false;
 
   List<dynamic> _productList = [].obs;
+  List<dynamic> _itemList = [].obs;
 
   String _cartMessage = '';
   
   @override
   void initState(){
-    _tabController = TabController(length: 7, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     _tabController.addListener(_handleTabSelection);
     super.initState();
     retrieveProducts();
+    retrieveItems();
+  
   }
 
 
@@ -98,6 +105,30 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
     }
   }
+
+  Future<void> retrieveItems() async{
+    // userId = await getUserId();
+    print("World");
+    ApiResponse response = await getItems();
+    if(response.error == null)
+    {
+      setState(() {
+        _itemList = response.data as List<dynamic>;
+        _loading = _loading ? !_loading : _loading;
+      });
+    }
+    else if(response.error == ApiConstants.unauthorized){
+            logoutUser();
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Home()
+                                                                ), 
+                                                (route) => false);
+     
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
    
   Future<void> addCart(Product product) async{
     userId = await getUserId();
@@ -108,6 +139,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
       setState(() {
         //add the counter here
         //incrementCount();
+        retrieveItems();
         _cartMessage = response.data.toString();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
         _loading = _loading ? !_loading : _loading;
@@ -126,8 +158,6 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
   }
 
 
-
-
   @override
   Widget build(BuildContext context) {
     final newCart = Provider.of<HomeController>(context);
@@ -135,6 +165,12 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
         backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right:20.0),
@@ -147,7 +183,6 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                   builder: (context, value,child) { 
                     return Text(value.getCounter().toString(), style: TextStyle(color: Colors.black));
                    },
-                
                 ),
                 child:  IconButton(
                             icon: Icon(Icons.shopping_bag_outlined, size: 30,), 
@@ -159,15 +194,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
               ),
             ),
           )
-          // IconBtnWithCounter(
-          //   svgSrc: "Assets/Images/cart.svg",
-          //   press:() {},
-          //  ),
-          //  IconBtnWithCounter(
-          //   svgSrc: "Assets/Images/bell.svg",
-          //   numOfItems: 3,
-          //   press:() {},
-          //  ),
+          
         ],
       ),
      
@@ -187,43 +214,46 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                         builder: (context, BoxConstraints constraints) {
                           return Stack(
                             children: [          
-                              // AnimatedPositioned(
-                              //     duration: Duration(milliseconds: 500),
-                              //     top: 10,
-                              //     left: 0,
-                              //       right: 0,
-                              //       child: Container(
-                              //         color: Colors.black,
-                              //         child: TabBar(
-                              //                       padding: EdgeInsets.only(left:13, right: 10),
-                              //                       controller: _tabController,
-                              //                       isScrollable: true,
-                              //                       // indicator: CircleTabIndicator(color: Color(0xffd17842), radius: 4),
-                              //                       indicator: const UnderlineTabIndicator(
-                              //                         borderSide: BorderSide(
-                              //                           width: 3,
-                              //                           color: Color(0xffE57734)
-                              //                         ),
-                              //                         insets: EdgeInsets.symmetric(horizontal: 16)
-                              //                       ),
-                              //                       labelColor: Color(0xffd17842),
-                              //                       labelStyle: TextStyle(
-                              //                         fontWeight: FontWeight.w500,
-                              //                         fontSize: 16
-                              //                       ),
-                              //                       unselectedLabelColor: Colors.white.withOpacity(0.5),
-                              //                         tabs:[
-                              //                           Tab(text: "All",),
-                              //                           Tab(text: "Starters",),
-                              //                           Tab(text: "Main Course",),
-                              //                           Tab(text: "Desserts",),
-                              //                           Tab(text: "Beverages",),
-                              //                           Tab(text: "Desserts",),
-                              //                           Tab(text: "Beverages",),
-                              //                         ]
-                              //                 ),
-                              //       ),
-                              // ),               
+                              AnimatedPositioned(
+                                  duration: Duration(milliseconds: 500),
+                                  top: 10,
+                                  left: 0,
+                                    right: 0,
+                                    child: Container(
+                                      color: Colors.black,
+                                      child: TabBar(
+                                        
+                                                    padding: EdgeInsets.only(left:13, right: 10),
+                                                    controller: _tabController,
+                                                    isScrollable: true,
+                                                    // indicator: CircleTabIndicator(color: Color(0xffd17842), radius: 4),
+                                                    indicator: const UnderlineTabIndicator(
+                                                      borderSide: BorderSide(
+                                                        width: 3,
+                                                        color: Color(0xffE57734)
+                                                      ),
+                                                      insets: EdgeInsets.symmetric(horizontal: 16)
+                                                    ),
+                                                    labelColor: Color(0xffd17842),
+                                                    labelStyle: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 16
+                                                    ),
+                                                    unselectedLabelColor: Colors.white.withOpacity(0.5),
+                                                      tabs:[
+                                                        Tab(text: "Food Items",),
+                                                        Tab(text: "Add On",),
+                                                       
+                                                      ],
+                                                        onTap: (index) {
+                                                          // Update the state to toggle the add-on content visibility
+                                                          setState(() {
+                                                            _addOnVisible = index == 1;
+                                                          });
+                                                        },
+                                              ),
+                                    ),
+                              ),               
                               AnimatedPositioned(
                                 duration: const Duration(milliseconds: 500),
                                   top: controller.homeState == HomeState.normal
@@ -231,42 +261,76 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin{
                                     : -(constraints.maxHeight -
                                         100 * 2 -
                                         85),
+                                   
                                   left: 0,
                                   right: 0,
-                                  height: constraints.maxHeight -
-                                    85 -
-                                    100,
-                                  
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft:
-                                          Radius.circular(20 * 1.5),
-                                      bottomRight:
-                                          Radius.circular(20 * 1.5),
-                                    ),
-                                  ),
-                                  child: GridView.builder(
-                                    itemCount:  _productList.length,
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      childAspectRatio: 0.8,
-                                      mainAxisSpacing: 10,
-                                      crossAxisSpacing: 10,
-                                    ),
-                                    itemBuilder: (context, index) => ProductCard(
-                                      product: _productList[index],
-                                      press: () {                                       
-                                              controller.addProductToCart(_productList[index]);
-                                              addCart(_productList[index]);
-                                              _cartTag = '_cartTag';                                           
-                                      }                                       
-                                    ),
-                                  ),
-                                ),
+                                  height: constraints.maxHeight -85 -100,                                  
+                                child: _tabController.index == 0?
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.black,
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft:
+                                                  Radius.circular(20 * 1.5),
+                                              bottomRight:
+                                                  Radius.circular(20 * 1.5),
+                                            ),
+                                          ),
+                                          child: GridView.builder(
+                                            itemCount:  _productList.length,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              childAspectRatio: 0.8,
+                                              mainAxisSpacing: 10,
+                                              crossAxisSpacing: 10,
+                                            ),
+                                            itemBuilder: (context, index) => ProductCard(
+                                              product: _productList[index],
+                                              press: () {                                       
+                                                      controller.addProductToCart(_productList[index]);
+                                                      addCart(_productList[index]);
+                                                      _cartTag = '_cartTag';                                           
+                                              } ,
+                                              addItem: () {
+                                                    addCart(_productList[index]);
+                                                },
+                                              removeItem: () {
+                                                    addCart(_productList[index]);
+                                                },                                      
+                                            ),
+                                          ),
+                                        ): Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.black,
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft:
+                                                  Radius.circular(20 * 1.5),
+                                              bottomRight:
+                                                  Radius.circular(20 * 1.5),
+                                            ),
+                                          ),
+                                          child: GridView.builder(
+                                            itemCount:  _itemList.length,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              // childAspectRatio: 0.8,
+                                              mainAxisSpacing: 10,
+                                              crossAxisSpacing: 10,
+                                            ),
+                                            itemBuilder: (context, index) => AddOnCard(
+                                              product: _itemList[index],
+                                              press: () {                                       
+                                                      controller.addProductToCart(_itemList[index]);
+                                                      addCart(_itemList[index]);
+                                                      _cartTag = '_cartTag';                                           
+                                              }                                       
+                                            ),
+                                          ),
+                                        ),
                               ),
                               // Card Panel
                               AnimatedPositioned(

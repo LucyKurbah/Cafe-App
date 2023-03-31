@@ -134,6 +134,7 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                       return LayoutBuilder(
                         builder: (context, BoxConstraints constraints) {
                           return Stack(
+                            
                             children: [          
                                          
                               AnimatedPositioned(
@@ -145,7 +146,7 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                         50),
                                   left: 0,
                                   right: 0,
-                                  height: constraints.maxHeight-30 ,
+                                  height: constraints.maxHeight-100 ,
                                   
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -170,7 +171,7 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                     itemBuilder: (context, index) => AddOnCard(
                                       product: _productList[index],
                                       press: () {
-                                              // controller.addProductToCart(_productList[index]);
+                                              controller.addProductToCart(_productList[index]);
                                               addCart(_productList[index]);
                                               _cartTag = '_cartTag';                                           
                                       }                                       

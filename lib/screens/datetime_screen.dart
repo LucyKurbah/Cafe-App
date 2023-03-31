@@ -68,7 +68,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
       checkDateTimeAvailability(widget.table.id, _selectedtimeFrom.text, formattedTime);
     });
   }
-convertTimeToPostgres(time,bookDate){
+  convertTimeToPostgres(time,bookDate){
     DateTime date = DateFormat('yyyy-MM-dd').parse(bookDate);
     DateTime ptime = DateFormat.jm().parse(time);
     DateTime postgresDateTime = DateTime(date.year, date.month, date.day, ptime.hour, ptime.minute, ptime.second);

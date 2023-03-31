@@ -23,13 +23,29 @@ class _CartScreenState extends State<CartScreen> {
   bool _loading = true;
   String _cartMessage = '';
   List<dynamic> _cartList = [].obs;
-  List<dynamic> _totalPrice = [].obs;
+
+  double totalPrice = 0.0;
   // RxDouble _totalCartAmount = 0.00.obs;
-
-
-
   // final CartController cartController = CartController();
 
+   Future<void>  goToPayment(_cartList, totalPrice) async{
+    ApiResponse response = await saveOrder(_cartList, totalPrice);
+    if(response.error == null)
+    {
+      print("Payment Done");
+    }
+    else if(response.error == ApiConstants.unauthorized){
+            logoutUser();
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Home()
+                                                                ), 
+                                                (route) => false);
+     
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
   _buildSingleCartProduct(){
     return Container(
             height: 150,
@@ -122,33 +138,63 @@ class _CartScreenState extends State<CartScreen> {
     // TODO: implement initState
     super.initState();
     retrieveCart();
+    // retrieveTotal();
   }
 
   Future<void> retrieveCart() async{
     userId = await getUserId();
-    
     ApiResponse response = await getCart();
-    
     if(response.error == null)
     {
-     
+      print(response.data);
       setState(() {
         _cartList = response.data as List<dynamic>;
-
+        // print(_cartList);
+        // Map<String, List<Cart>> groupedCarts = {};
+        // _cartList.forEach((cart) {
+        //   String flag = cart.flag;
+        //   if(flag=="F")
+        //   print("Food");
+        //   else
+        //   print("Table");
+        // });
         _loading = _loading ? !_loading : _loading;
-        //retrieveTotal();
+        retrieveTotal();
       });
     }
     else if(response.error == ApiConstants.unauthorized){
-
       logoutUser();
              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
                                                       builder: (context) => Login()
                                                                 ), 
                                                 (route) => false);
-     
     }
     else{
+      print(response.error);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
+
+  Future<void> retrieveTotal() async{
+    userId = await getUserId();
+    ApiResponse response = await getTotal();
+    if(response.error == null)
+    {
+     
+      setState(() {
+        totalPrice = response.data as double;
+        _loading = _loading ? !_loading : _loading;
+      });
+    }
+    else if(response.error == ApiConstants.unauthorized){
+      logoutUser();
+             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);     
+    }
+    else{
+      print("Retrieve Total error");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
     }
   }
@@ -177,8 +223,7 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-
- Future<void> removeCart(Cart cart) async{
+  Future<void> removeCart(Cart cart) async{
     userId = await getUserId();
   
     ApiResponse response = await decrementCart(cart);
@@ -202,40 +247,146 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: _buildAppBar(),
-      
+      appBar: _buildAppBar(),      
       body: Stack(
         children: [
+          
             Container(),
             Positioned(
-           
-              child: ListView.builder(
+              child:ListView.separated(
+                padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 115),   
                 itemCount: _cartList.length,
-                shrinkWrap: true,
-                padding: EdgeInsets.all(16),
-                
-                itemBuilder: ((context, index) => 
-                   CartCard(
-                      cart: _cartList[index], 
-                      addItem: (){
-                          addCart(_cartList[index]);
-                      }, 
-                      removeItem: (){
-                          removeCart(_cartList[index]);
+                itemBuilder: (context, index) {
+                  final currentFlag = _cartList[index].flag;
+                  // Check if the current flag is different from the previous flag
+                  if (_cartList[index].flag == "I" && index == _cartList.indexWhere((item) => item.flag == "I")) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            "Add On ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                        Divider(),
+                        CartCard(
+                          cart: _cartList[index],
+                          addItem: () {
+                            addCart(_cartList[index]);
+                          },
+                          removeItem: () {
+                            removeCart(_cartList[index]);
+                          },
+                        ),
+                      ],
+                    );
+                  }
+                  else  if (_cartList[index].flag == "T" && index == _cartList.indexWhere((item) => item.flag == "T"))
+                  {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            "Table",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                        Divider(),
+                        CartCard(
+                          cart: _cartList[index],
+                          addItem: () {
+                            addCart(_cartList[index]);
+                          },
+                          removeItem: () {
+                            removeCart(_cartList[index]);
+                          },
+                        ),
+                      ],
+                    );
+                  }
+                  else  if (_cartList[index].flag == "F" && index == _cartList.indexWhere((item) => item.flag == "F"))
+                  {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            "Food Items",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                        Divider(),
+                        CartCard(
+                          cart: _cartList[index],
+                          addItem: () {
+                            addCart(_cartList[index]);
+                          },
+                          removeItem: () {
+                            removeCart(_cartList[index]);
+                          },
+                        ),
+                      ],
+                    );
+                  }
 
-                      })
-                ),
-               )
+                   else {
+                    // If not, just display the CartCard
+                    return CartCard(
+                      cart: _cartList[index],
+                      addItem: () {
+                        addCart(_cartList[index]);
+                      },
+                      removeItem: () {
+                        removeCart(_cartList[index]);
+                      },
+                    );
+                  }
+                },
+                separatorBuilder: (context, index) => Divider(),
+              ) ,
+               
+              // child: ListView.builder(
+                
+              //   itemCount: _cartList.length,
+              //   shrinkWrap: true,
+              //   padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 115),   
+                            
+              //   itemBuilder: ((context, index) => 
+              //      CartCard(
+              //         cart: _cartList[index], 
+              //         addItem: (){
+              //             addCart(_cartList[index]);
+              //         }, 
+              //         removeItem: (){
+              //             removeCart(_cartList[index]);
+              //         })
+              //   ),
+              //  )
             ),
             _buildBottom(),
         ],
-      )
-       
+      )       
     );
   }
 
@@ -327,7 +478,7 @@ class _CartScreenState extends State<CartScreen> {
                                           color: Colors.white,
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold)),
-                            Text("Rs. 99" ,style: TextStyle(
+                            Text("₹ ${totalPrice}" ,style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18.0
@@ -350,7 +501,9 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                               
-                                onPressed: (){}, 
+                                onPressed: (){
+                                  goToPayment(_cartList, totalPrice);
+                                }, 
                                 child: Text("Checkout", style: TextStyle(fontSize: 16),),
                               ),
                             ),
@@ -382,7 +535,7 @@ class _CartScreenState extends State<CartScreen> {
                         //   ],
                         // ),
                         SizedBox(height: 16,),
-                        Text("Continue Shopping", style: TextStyle(color: Colors.white),)
+                        // Text("Continue Shopping", style: TextStyle(color: Colors.white),)
                       ],
                     ),
             ),

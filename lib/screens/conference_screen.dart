@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 
 import 'package:cafe_app/constraints/constants.dart';
 import 'package:cafe_app/controllers/home_controller.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import '../api/apiFile.dart';
 import '../services/api_response.dart';
+import '../services/cart_service.dart';
 import '../services/conference_service.dart';
 import '../services/table_service.dart';
 import '../services/user_service.dart';
 import '../widgets/custom_widgets.dart';
+import 'addOn_page.dart';
 import 'cartscreen.dart';
 import 'package:badges/badges.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +19,7 @@ import 'login.dart';
 
 class ConferenceScreen extends StatefulWidget {
   ConferenceScreen({super.key});
+
   @override
   State<ConferenceScreen> createState() => _ConferenceScreenState();
 }
@@ -25,10 +29,48 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
   TextEditingController _date = TextEditingController();
   TextEditingController _selectedtimeFrom = TextEditingController();
   TextEditingController _selectedtimeTo = TextEditingController();
-  
+  TextEditingController noOfHours = TextEditingController();
+  int hours=0,minutes =0;
+  int userId = 0;
+  bool _loading = true;
+  String t_date = '';
   TimeOfDay? timeFrom, timeTo;
+  String _cartMessage = '';
+  bool checkTable =false;
+
+  List<dynamic> _conferenceList = [].obs;
+
+  @override
+  void initState(){
+    
+    super.initState();
+    retrieveConference();
+  }
 
   
+  Future<void> retrieveConference() async{
+    userId = await getUserId();
+    ApiResponse response = await getConference();
+    if(response.error == null)
+    {
+      setState(() {
+        _conferenceList = response.data as List<dynamic>;
+        _loading = _loading ? !_loading : _loading;
+      });
+    }
+    else if(response.error == ApiConstants.unauthorized){
+            logoutUser();
+             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);
+      
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
+   
 
   void _updateSecondTimePicker(TimeOfDay newTime) {
     if (timeFrom != null && newTime != null && newTime.hour < timeFrom!.hour) {
@@ -44,17 +86,70 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
       newTime = TimeOfDay(hour: timeFrom!.hour, minute: timeFrom!.minute);
     }
     DateTime parsedTime =
-        DateFormat.Hm().parse(newTime.format(context).toString());
+        DateFormat.jm().parse(newTime.format(context).toString());
 
     String formattedTime = DateFormat('h:mm a').format(parsedTime);
 
     setState(() {
       _selectedtimeTo.text = formattedTime;
-      // calculateHours(_selectedtimeFrom.text, formattedTime);
-      // checkDateTimeAvailability(widget.table.id, _selectedtimeFrom.text, formattedTime);
+      calculateHours(_selectedtimeFrom.text, formattedTime);
+      checkDateTimeAvailability(_conferenceList[0].id, _date.text, _selectedtimeFrom.text, formattedTime);
+      print(_date.text);
+      print(_selectedtimeFrom.text);
+      print(formattedTime);
     });
   }
 
+  convertTimeToPostgres(time,bookDate){
+    DateTime date = DateFormat('yyyy-MM-dd').parse(bookDate);
+    DateTime ptime = DateFormat.jm().parse(time);
+    DateTime postgresDateTime = DateTime(date.year, date.month, date.day, ptime.hour, ptime.minute, ptime.second);
+    return postgresDateTime.toString();
+  }
+
+  
+  Future<void> addCart( String totalPrice, String date, String timeFrom, String timeTo) async{
+    userId = await getUserId();
+
+    DateTime time_from = DateFormat('h:mm a').parse(timeFrom);
+    DateTime time_to = DateFormat('h:mm a').parse(timeTo);
+    String bookDate =convertTimeToPostgres(timeFrom,date);
+
+    ApiResponse response = await addConferenceToCart(totalPrice, bookDate, time_from.toString(), time_to.toString());
+
+    if(response.error == null)
+    {
+      if(response.data==200)
+      {
+          setState(() {
+            //add the counter here
+            //incrementCount();
+            _cartMessage = "Table added to Cart";
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+            _loading = _loading ? !_loading : _loading;
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                          builder: (context) => AddOnPage()
+                                                                    ), 
+                                                    (route) => false);
+          });
+      }
+      else if(response.data=="X")
+      {
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Table is not available for the selected time")));
+      }
+     
+    }
+    else if(response.error == ApiConstants.unauthorized){
+          logoutUser();
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +279,7 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
                                               icon: Icon(
                                                   Icons.calendar_month_sharp,
                                                   color: Colors.white),
-                                              labelText: "Select Time",
+                                              labelText: "Select Time From",
                                               labelStyle: TextStyle(
                                                   color: Colors.white),
                                             ),
@@ -209,7 +304,7 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
                                               if (timeFrom != null) {
                                                 try {
                                                   DateTime parsedTime =
-                                                      DateFormat.Hm().parse(
+                                                      DateFormat.jm().parse(
                                                           timeFrom!
                                                               .format(context)
                                                               .toString());
@@ -242,7 +337,7 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
                                               icon: Icon(
                                                   Icons.calendar_month_sharp,
                                                   color: Colors.white),
-                                              labelText: "Select Time",
+                                              labelText: "Select Time To",
                                               labelStyle: TextStyle(
                                                   color: Colors.white),
                                             ),
@@ -282,35 +377,93 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
                                 ],
                               ),
                             ),
-                            
-                              SizedBox(height: 70,),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                            
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                                      decoration: BoxDecoration(
-                                        color: Color.fromARGB(255, 50, 54, 56),
-                                        borderRadius: BorderRadius.circular(18)
-                                      ),
-                                     
+                            SizedBox(height: 30,),
+                            noOfHours.text.isNotEmpty ?Container(
+                                  width: double.infinity,
+                                  margin: EdgeInsets.all(16.0),
+                                  padding: EdgeInsets.all(16.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                     Text("No of hours: $hours",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.white)),
+                                            SizedBox(height: 8.0),
+                                       
+                                      Text("TOTAL PRICE: Rs."+ noOfHours.text,
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.white))
+                                              ],
+                                            ),
+                                          ) 
+                              : SizedBox.shrink(),
+                              noOfHours.text.isNotEmpty?Center(
+                                child: 
+                                    Container(          
+                                      alignment: Alignment.center,
                                       child:
-                                              TextButton(
-                                                      child: Text('Book Conference Hall', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                                                      onPressed:  (){
-                                                        // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
-                                                        checkAvailability(_date.toString(),_selectedtimeFrom.toString(),_selectedtimeTo.toString());
-                                                        }
-                                                      )
+                                      // (checkTable)?
+                                              StatefulBuilder(
+                                                builder: (context, setState) {
+                                                  return ElevatedButton(                                                  
+                                                         style: ButtonStyle(                                                           
+                                                             backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 50, 54, 56)),
+                                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(18.0),
+                                                                  ),                                                              
+                                                                ),                                                               
+                                                          ),                                                                                                                        
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                                                            child: Text('Add to Cart', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                                                          ),
+                                                          onPressed:  (){
+                                                            // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
+                                                             addCart(noOfHours.text, t_date, _selectedtimeFrom.text.toString(), _selectedtimeTo.text.toString());
+                                                            },
+                                                          );
+                                                }
+                                              )
                                     ),
-                                    
-                                    
-                                  ],
-                                ),
                               )
+                              :
+                              SizedBox.shrink(),
+                              // SizedBox(height: 70,),
+                              // Container(
+                              //   width: MediaQuery.of(context).size.width,
+                            
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.center,
+                              //     children: [
+                              //       Container(
+                              //         padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                              //         decoration: BoxDecoration(
+                              //           color: Color.fromARGB(255, 50, 54, 56),
+                              //           borderRadius: BorderRadius.circular(18)
+                              //         ),
+                                     
+                              //         child:
+                              //                 TextButton(
+                              //                         child: Text('Book Conference Hall', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                              //                         onPressed:  (){
+                              //                           // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
+                              //                           // checkDateTimeAvailability(_date.toString(),_selectedtimeFrom.toString(),_selectedtimeTo.toString());
+                              //                           }
+                              //                         )
+                              //       ),
+                                    
+                                    
+                              //     ],
+                              //   ),
+                              // )
                             ],
                           ),
                         )
@@ -322,12 +475,33 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
             ],
           ),
         ),
-     
     );
   }
-}
+  
+  void calculateHours(String timeString1, String timeString2) {
+      // Parse the time strings into DateTime objects
+      DateTime time1 = DateFormat('h:mm a').parse(timeString1);
+      DateTime time2 = DateFormat('h:mm a').parse(timeString2);
 
+      // Calculate the duration between the two DateTime objects
+      Duration difference = time2.difference(time1);
 
+      // Get the difference in hours
+      hours = difference.inHours;
+
+      // Get the difference in hours
+      minutes = difference.inMinutes.remainder(60);
+      print('The difference between $timeString1 and $timeString2 is $hours hours and $minutes minutes');
+      if (minutes > 0) {
+        hours += 1;
+      }
+      else if(hours == 0)
+      {
+        hours = 1;
+      }
+      noOfHours.text = (hours * _conferenceList[0].price).toString();
+      // print('The difference between $timeString1 and $timeString2 is $hours hours and $minutes minutes');
+   }
   buildAppBar(context) {
     return AppBar(
           backgroundColor: Colors.black,
@@ -360,59 +534,75 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
         );
   }
 
-void _loadUserInfo(context) async{
-  String token = await getToken();
+  void _loadUserInfo(context) async{
+    String token = await getToken();
 
-  if(token == ''  || token == null)
-  {
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Login()), (route) => false);
+    if(token == ''  || token == null)
+    {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Login()), (route) => false);
+    }
+    else{
+      ApiResponse response = await getUserDetails();
+      print(response.data);
+      if(response.error == null)
+      {
+        
+      }
+      else if(response.error == ApiConstants.unauthorized)
+      {
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>Login()), (route) => false);
+      }
+      else
+      {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.error}')
+        ));
+      }
+    }
   }
-  else{
-    ApiResponse response = await getUserDetails();
+
+void checkDateTimeAvailability(int id,String date, String timeFrom, String timeTo)  async {
+    ApiResponse response = await checkConferenceHallDetails(id, timeFrom, timeTo, date);
+    print("Check");
     print(response.data);
-    if(response.error == null)
-    {
-      
-    }
-    else if(response.error == ApiConstants.unauthorized)
-    {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>Login()), (route) => false);
-    }
-    else
-    {
-     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('${response.error}')
-      ));
+    if (response.error == null) {
+      if(response.data != null)
+      {
+        print("object");
+        print(response.data);
+        if(response.data.toString()=="VE")
+        {
+          print("Validation Error");
+          checkTable=false;
+        }
+        else if(response.data==200)
+        {
+            print("Time and date available");
+            // setState(() {
+            //    checkTable=true;
+            // });
+           
+        }
+        else if(response.data==300)
+        {
+            print("Time and date not available");
+            checkTable=false;
+        }
+      }
+      else{
+        showSnackBar(title: '',message: 'The Time slot is not available');
+         checkTable=false;
+      }
+    } else if (response.error == ApiConstants.unauthorized) {
+       checkTable=false;
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    } else {
+       checkTable=false;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
     }
   }
 }
 
-  void checkAvailability(String date, String timeFrom, String timeTo)  async {
-   
-    ApiResponse response = await getConferenceHallDetails(date, timeFrom, timeTo);
-    
-    if (response.error == null) {
-      print(response.data);
-      print("Hello");
-      if(response.data != null)
-      {
-        print("Conference Hall available");
-        //Show the add to cart button
-      }
-      else{
-        showSnackBar(title: '',message: 'The Time slot is not available');
-      }
-    } else if (response.error == ApiConstants.unauthorized) {
-      showSnackBar(title: '',message: 'An error occurred');
-    } else {
-     showSnackBar(title: '',message: 'An error occurred');
-    }
-  }
-// void _showTimePicker(context)
-// {
-//   showTimePicker(
-//     context: context, 
-//     initialTime: TimeOfDay.now(),
-//   );
-// }
-  
+

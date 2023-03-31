@@ -27,7 +27,6 @@ class CartCard extends StatelessWidget {
     return Container(
             height: 150,
             width: double.infinity,
-      
             child: Card(
               color: Colors.grey[900],
               child: Column(
@@ -44,6 +43,7 @@ class CartCard extends StatelessWidget {
                                   scale: 0.4,
                                 )
                       ),
+                     
                       Container(
                         height: 140,
                         width: 200,
@@ -58,6 +58,7 @@ class CartCard extends StatelessWidget {
                                   color: Color(0xff9b96d6),
                                   fontWeight: FontWeight.bold
                                 ),),
+                                
                                 Container(
                                   height: 40,
                                   width: 150,
@@ -67,6 +68,7 @@ class CartCard extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
+                                      
                                       GestureDetector(
                                         child: Icon(Icons.delete_rounded, color: Colors.white,),
                                         onTap:removeItem
@@ -96,6 +98,6 @@ class CartCard extends StatelessWidget {
                 ],
               ),
             ),
-      );;
+      );
   }
 }

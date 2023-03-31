@@ -13,7 +13,9 @@ Future<ApiResponse> getProducts() async{
         switch(response.statusCode)
         {
           case 200:
+           print(response.body);
             apiResponse.data =  jsonDecode(response.body).map((p) => Product.fromJson(p)).toList();
+           
             break;
           case 401:
             apiResponse.error = ApiConstants.unauthorized;

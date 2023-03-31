@@ -3,8 +3,9 @@ class Product{
     int? id;
     late String title, image, desc;
     late double price;
+    int? quantity;
 
-    Product({required this.title, required this.image, required this.price, required this.id, required this.desc});
+    Product({this.quantity, required this.title, required this.image, required this.price, required this.id, required this.desc});
 
   factory Product.fromJson(Map<String, dynamic> json){
   
@@ -14,6 +15,8 @@ class Product{
       image : json['path_file'],
       price : double.parse(json['price']),
       desc : json['description'],
+      quantity : json['food_quantity'],
+
     );
   }
 
@@ -23,7 +26,8 @@ class Product{
       'title': title,
       'desc' : desc,
       'price' : price,
-      'image' :image
+      'image' :image,
+      'quantity' :quantity
     };
   }
 

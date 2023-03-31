@@ -11,12 +11,14 @@ class ProductCard extends StatelessWidget {
   ProductCard({
     Key? key,
     required this.product,
+     required this.addItem,
+    required this.removeItem,
     required this.press,
   }) : super(key: key);
 
   final Product product;
 
-  final VoidCallback press;
+  final VoidCallback press,addItem, removeItem;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +74,33 @@ class ProductCard extends StatelessWidget {
                   .textTheme
                   .subtitle1!
                   .copyWith(fontWeight: FontWeight.w600, color: Colors.white),),
-                const FavBtn(),
+                if(product.quantity == null)
+                    const FavBtn(),
+                if(product.quantity != null)
+                    Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      
+                                      GestureDetector(
+                                        child: Icon(Icons.delete_rounded, color: Colors.white,),
+                                        onTap:removeItem
+                                      ),
+                                      SizedBox(width: 10,),
+                                      Text("${product.quantity}",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white
+                                        ),
+                                      ),
+                                      SizedBox(width: 10,),
+                                       GestureDetector(
+                                        child: Icon(Icons.add, color: Colors.white),
+                                        onTap: addItem,
+                                      ),
+                                      
+                                    ],
+                                  ),
               ],
             )
           ],
