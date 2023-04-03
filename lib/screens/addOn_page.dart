@@ -163,8 +163,8 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                     itemCount:  _productList.length,
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 1,
-                                       childAspectRatio: 4,
+                                      crossAxisCount: 2,
+                                      //  childAspectRatio: 4,
                                       mainAxisSpacing: 10,
                                       crossAxisSpacing: 10,
                                     ),
@@ -174,7 +174,9 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                               controller.addProductToCart(_productList[index]);
                                               addCart(_productList[index]);
                                               _cartTag = '_cartTag';                                           
-                                      }                                       
+                                      },
+                                      addItem: (){ print("Added to Cart");},
+                                      removeItem: (){print("Deleted");}                                     
                                     ),
                                   ),
                                 ),

@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:cafe_app/controllers/home_controller.dart';
 import 'package:cafe_app/db/db_helper.dart';
+import 'package:cafe_app/models/AddOn.dart';
 import 'package:cafe_app/screens/addOn_page.dart';
 import 'package:cafe_app/screens/home/components/addOn_card.dart';
 import 'package:cafe_app/screens/home/components/product_card.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:cafe_app/models/user_model.dart';
 import 'package:cafe_app/services/api_response.dart';
 import 'package:provider/provider.dart';
+import '../models/Cart.dart';
 import 'home/components/cart_details_view.dart';
 import 'home/components/cart_short_view.dart';
 import 'package:cafe_app/api/apiFile.dart';
@@ -54,9 +56,7 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
     super.initState();
     retrieveProducts();
     retrieveItems();
-  
   }
-
 
   _handleTabSelection(){
     if(_tabController.indexIsChanging){
@@ -90,6 +90,8 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
     {
       setState(() {
         _productList = response.data as List<dynamic>;
+       
+
         _loading = _loading ? !_loading : _loading;
       });
     }
@@ -134,6 +136,33 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
     userId = await getUserId();
 
     ApiResponse response = await addToCart(product);
+    if(response.error == null)
+    {
+      setState(() {
+        //add the counter here
+        //incrementCount();
+        retrieveItems();
+        _cartMessage = response.data.toString();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        _loading = _loading ? !_loading : _loading;
+      });
+    }
+    else if(response.error == ApiConstants.unauthorized){
+          logoutUser();
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Login()
+                                                                ), 
+                                                (route) => false);
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+    }
+  }
+
+  Future<void> addItemCart(AddOn product) async{
+    userId = await getUserId();
+
+    ApiResponse response = await addItemToCart(product);
     if(response.error == null)
     {
       setState(() {
@@ -265,7 +294,7 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
                                   left: 0,
                                   right: 0,
                                   height: constraints.maxHeight -85 -100,                                  
-                                child: _tabController.index == 0?
+                                  child: _tabController.index == 0?
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 10),
                                           decoration: const BoxDecoration(
@@ -286,20 +315,23 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
                                               mainAxisSpacing: 10,
                                               crossAxisSpacing: 10,
                                             ),
-                                            itemBuilder: (context, index) => ProductCard(
-                                              product: _productList[index],
-                                              press: () {                                       
-                                                      controller.addProductToCart(_productList[index]);
-                                                      addCart(_productList[index]);
-                                                      _cartTag = '_cartTag';                                           
-                                              } ,
-                                              addItem: () {
-                                                    addCart(_productList[index]);
-                                                },
-                                              removeItem: () {
-                                                    addCart(_productList[index]);
-                                                },                                      
-                                            ),
+                                            itemBuilder: (context, index){ 
+                                                final product = _productList[index];
+                                                return ProductCard(
+                                                    product: product,
+                                                    press: () {                                       
+                                                            controller.addProductToCart(_productList[index]);
+                                                            addCart(_productList[index]);
+                                                            _cartTag = '_cartTag';                                           
+                                                    } ,
+                                                    addItem: () {
+                                                          addCart(_productList[index]);
+                                                      },
+                                                    removeItem: () {
+                                                          addCart(_productList[index]);
+                                                      },                                      
+                                                  );
+                                            }
                                           ),
                                         ): Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -324,10 +356,17 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
                                             itemBuilder: (context, index) => AddOnCard(
                                               product: _itemList[index],
                                               press: () {                                       
-                                                      controller.addProductToCart(_itemList[index]);
-                                                      addCart(_itemList[index]);
+                                                      // controller.addProductToCart(_itemList[index]);
+                                                      addItemCart(_itemList[index]);
                                                       _cartTag = '_cartTag';                                           
-                                              }                                       
+                                              },
+                                               addItem: (() {
+                                                addItemCart(_itemList[index]);                                            
+                                              }),
+                                              removeItem:() {
+                                                print("Removed");       
+                                              }  
+                                                                                     
                                             ),
                                           ),
                                         ),

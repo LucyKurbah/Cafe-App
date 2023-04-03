@@ -8,210 +8,117 @@ import '../../../services/api_response.dart';
 import '../../../services/cart_service.dart';
 import '../../../services/user_service.dart';
 
-class AddOnCard extends StatefulWidget {
+class AddOnCard extends StatelessWidget {
 
   AddOnCard({
     Key? key,
     required this.product,
+     required this.addItem, required this.removeItem,
     required this.press,
   }) : super(key: key);
 
   final AddOn product;
-  final VoidCallback press;
+  final VoidCallback  addItem, removeItem,press;
 
 
-  @override
-  State<AddOnCard> createState() => _AddOnCardState();
-}
-
-class _AddOnCardState extends State<AddOnCard> {
   bool rememberMe = false;
+
   bool checkedValue = false;
+
   int userId = 0;
- 
-  Future<void> addCart(AddOn item) async{
-    userId = await getUserId();
 
-    ApiResponse response = await addItemToCart(item);
-    if(response.error == null)
-    {
-      setState(() {
-
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Added")));
-
-      });
-    }
-    else if(response.error == ApiConstants.unauthorized){
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error occurred")));
-                                          
-    }
-    else{
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
-    }
-  }
-
-   Future<void> removeCart(AddOn item) async{
-    userId = await getUserId();
-
-    ApiResponse response = await removeItemFromCart(item);
-    if(response.error == null)
-    {
-      setState(() {
-
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Removed")));
-
-      });
-    }
-    else if(response.error == ApiConstants.unauthorized){
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error occurred")));
-                                          
-    }
-    else{
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
-    }
-  }
-
-
+  // Future<void> addCart(AddOn item) async{
   @override
   Widget build(BuildContext context) {
     return
-     GestureDetector(
-      onTap: (){
-         setState(() {
-          checkedValue = !checkedValue;
-          if(checkedValue)
-            addCart(widget.product);
-          else
-            removeCart(widget.product);
-        });
-      },
-       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-        decoration: BoxDecoration(
-          color: Colors.grey[900],
-          borderRadius: const BorderRadius.all(
-            Radius.circular(defaultPadding * 1.25),
+     Container(
+      padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: const BorderRadius.all(
+          Radius.circular(defaultPadding * 1.25),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      height: 120,
+                      width: MediaQuery.of(context).size.width,
+                      child:
+                            Image.network(
+                               product.image,
+                                fit: BoxFit.contain,
+                                scale: 0.4,
+                              )
+                           
+                    ),
+          const SizedBox(height: 10,),
+          Text(
+            product.title,
+            style: Theme.of(context)
+                .textTheme
+                .subtitle1!
+                .copyWith(fontWeight: FontWeight.w600, fontSize: 18,color: Colors.white),
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              margin: const EdgeInsets.all(10),
-              height: 100,
-              width: 100,
-              child:
-                    Image.network(
-                       widget.product.image,
-                        fit: BoxFit.contain,
-                        scale: 0.4,
-                      )
-            ),
-            const SizedBox(width: 10,),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [              
-                Text(
-                  widget.product.title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .subtitle1!
-                      .copyWith(fontWeight: FontWeight.w600, fontSize: 18,color: Colors.white),
+          const SizedBox(height: 20,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("₹ ${product.price}",
+               style: Theme.of(context)
+                .textTheme
+                .subtitle1!
+                .copyWith(fontWeight: FontWeight.w600, color: Colors.white),),
+              
+            
+               Container(
+                padding: EdgeInsets.only(top:5,bottom: 5,left: 10,right: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Color(0xffE57734)
                 ),
-               SizedBox(height: 5,),
-                Text("₹ ${widget.product.price}",
-                 style: Theme.of(context)
-                  .textTheme
-                  .subtitle1!
-                  .copyWith(fontSize: 13, color: Colors.white),),
-              ],
-            ),
-            if(checkedValue)
-                  SizedBox(width: 20,),
-          // this will fill up any remaining space
-            Expanded(child: Container()), 
-            Column(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                          child: 
-                            Transform.scale(
-                              scale: 1.5,
-                              child: Theme(
-                                data: ThemeData(
-                                    checkboxTheme: CheckboxThemeData(
-                                      shape: CircleBorder(),
-                                      checkColor: MaterialStateProperty.all<Color>(Colors.white),
-                                        fillColor: MaterialStateProperty.resolveWith<Color?>(
-                                            (Set<MaterialState> states) {
-                                              if (states.contains(MaterialState.selected)) {
-                                                return Colors.grey[800];
-                                              } else {
-                                                return Colors.grey;
-                                          } }, ),
-                                      splashRadius: 10.0,
-                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                      visualDensity: VisualDensity.compact,
-                                    ),                          
-                                  ),                          
-                                child: Checkbox(
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  tristate: false,
-                                    value: checkedValue, 
-                                    onChanged:(bool? newValue) {   
-                                    setState(() {
-                                      checkedValue = newValue ?? false;
-                                      if (checkedValue) {
-                                        // addItemToCart();
-                                        addCart(widget.product);
-                                        print("Click");
-                                      }
-                                      else
-                                      {
-                                        //RemoveAllFrom Cart
-                                        removeCart(widget.product);
-                                        print("object");
-                                      }
-                                    });                                   
-                                    }),
-                              ),
-                            ),
+                child: 
+                product.quantity == null || product.quantity == 0?
+                        
+                        InkWell(
+                          child: Text("Add", style: TextStyle(color: Colors.white)
                           ),
-                ),
-                         if(checkedValue)
-                            Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        GestureDetector(
-                                                          child: Text('- ',style: TextStyle(fontSize: 30, color: Colors.white),),
-                                                          onTap:(){
-                                                            // addItemToCart(widget.product.id);
-                                                          }
-                                                        ),
-                                                        SizedBox(width: 5,),
-                                                        Text("1",
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors.white
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 5,),
-                                                        GestureDetector(
-                                                          child: Icon(Icons.add, color: Colors.white),
-                                                          onTap: (){
-                                                            // removeItemsFromCart(widget.product.id);
-                                                          },
-                              ), ],),
-                      
-              ],
-            ),
-          ],
-        ),
-        
-         ),
-     );   
+                          onTap: addItem,
+                          )
+                          :
+                             Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    
+                                    children: [
+                                      GestureDetector(
+                                        child: Text("- ", style: TextStyle(color: Colors.white,fontSize: 25, fontWeight: FontWeight.bold)),
+                                        onTap:removeItem
+                                      ),
+                                      SizedBox(width: 10,),
+                                      Text("${product.id}",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white
+                                        ),
+                                      ),
+                                      SizedBox(width: 10,),
+                                       GestureDetector(
+                                        child: Icon(Icons.add, color: Colors.white),
+                                        onTap: addItem,
+                                      ),
+                                      
+                                    ],
+                                  ),
+              ),
+            ],
+          ),    
+        ],
+      ),
+      
+       );   
   }
 }
+

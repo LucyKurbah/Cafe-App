@@ -18,7 +18,7 @@ class _LoadingState extends State<Loading> {
 void _loadUserInfo() async {
   String token = await getToken();
   int userId = await getUserId();
-  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Home()), (route) => false);
+  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MenuPage()), (route) => false);
   // if(userId == '' || userId == null)
   // {
   //   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Home()), (route) => false);

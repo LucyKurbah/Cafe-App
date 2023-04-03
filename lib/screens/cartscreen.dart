@@ -50,7 +50,6 @@ class _CartScreenState extends State<CartScreen> {
     return Container(
             height: 150,
             width: double.infinity,
-      
             child: Card(
               color: Colors.grey[900],
               child: Column(

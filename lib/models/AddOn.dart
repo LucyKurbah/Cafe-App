@@ -1,19 +1,21 @@
 class AddOn{
     
-    int? id;
+    int? id, quantity;
     late String title, image, desc;
     late double price;
 
-    AddOn({required this.title, required this.image, required this.price, required this.id, required this.desc});
+
+    AddOn({this.quantity,required this.title, required this.image, required this.price, required this.id, required this.desc});
 
   factory AddOn.fromJson(Map<String, dynamic> json){
-    print(json);
+
     return AddOn(
       id : json['id'],
       title : json['item_name'],
       image : json['path_file'],
       price : double.parse(json['price']),
       desc : json['description'],
+      quantity : json['item_quantity'],
     );
   }
 
@@ -23,7 +25,8 @@ class AddOn{
       'title': title,
       'desc' : desc,
       'price' : price,
-      'image' :image
+      'image' :image,
+      'quantity': quantity
     };
   }
 

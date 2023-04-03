@@ -1,10 +1,13 @@
 
+import 'package:cafe_app/models/AddOn.dart';
 import 'package:cafe_app/models/Product.dart';
 import 'package:cafe_app/models/ProductItem.dart';
 import 'package:cafe_app/models/TableItem.dart';
 import 'package:cafe_app/models/Table.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/AddOnItem.dart';
 
 
 enum HomeState { normal, cart }
@@ -42,6 +45,7 @@ class HomeController extends ChangeNotifier {
     cart.add(ProductItem(product: product));
     notifyListeners();
   }
+
 
   
 

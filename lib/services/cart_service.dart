@@ -352,10 +352,8 @@ Future<ApiResponse> decrementCart(Cart cart) async{
   return apiResponse;
 }
 
-
 Future<ApiResponse> getTotal() async{
   ApiResponse apiResponse = ApiResponse();
-
  try {
     String token = await getToken();
     int userId = await getUserId();
@@ -389,7 +387,6 @@ Future<ApiResponse> getTotal() async{
 
   return apiResponse;
 }
-
 
 
 Future<ApiResponse> saveOrder(_cartList, totalPrice) async{
