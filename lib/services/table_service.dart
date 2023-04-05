@@ -43,11 +43,11 @@ Future<ApiResponse> getTables() async{
   return apiResponse;
 }
 convertDateToPostgres(bookDate){
-  print(bookDate);
     DateTime date = DateFormat('dd-MM-yyyy').parse(bookDate);
+    print(date);
     String formattedDate = '${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    
-    return formattedDate;
+    return('${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}');
+   
   }
 
 convertTimeToPostgres(time,bookDate){

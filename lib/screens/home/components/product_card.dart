@@ -46,7 +46,7 @@ class ProductCard extends StatelessWidget {
                         width: MediaQuery.of(context).size.width,
                         child:
                               Image.network(
-                                 product.image,
+                                 this.product.image,
                                   fit: BoxFit.contain,
                                   scale: 0.4,
                                 )
@@ -74,33 +74,35 @@ class ProductCard extends StatelessWidget {
                   .textTheme
                   .subtitle1!
                   .copyWith(fontWeight: FontWeight.w600, color: Colors.white),),
-                if(product.quantity == null)
-                    const FavBtn(),
-                if(product.quantity != null)
-                    Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      
-                                      GestureDetector(
-                                        child: Icon(Icons.delete_rounded, color: Colors.white,),
-                                        onTap:removeItem
-                                      ),
-                                      SizedBox(width: 10,),
-                                      Text("${product.quantity}",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white
-                                        ),
-                                      ),
-                                      SizedBox(width: 10,),
-                                       GestureDetector(
-                                        child: Icon(Icons.add, color: Colors.white),
-                                        onTap: addItem,
-                                      ),
-                                      
-                                    ],
-                                  ),
+                const FavBtn(),
+                
+                    // Visibility(
+                    //   visible: product.quantity != null && product.quantity != 0,
+                    //   child: Row(
+                    //                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //                   crossAxisAlignment: CrossAxisAlignment.center,
+                    //                   children: [
+                                        
+                    //                     GestureDetector(
+                    //                       child: Icon(Icons.delete_rounded, color: Colors.white,),
+                    //                       onTap:removeItem
+                    //                     ),
+                    //                     SizedBox(width: 10,),
+                    //                     Text("${product.quantity}",
+                    //                       style: TextStyle(
+                    //                         fontSize: 16,
+                    //                         color: Colors.white
+                    //                       ),
+                    //                     ),
+                    //                     SizedBox(width: 10,),
+                    //                      GestureDetector(
+                    //                       child: Icon(Icons.add, color: Colors.white),
+                    //                       onTap: addItem,
+                    //                     ),
+                                        
+                    //                   ],
+                    //                 ),
+                    // ),
               ],
             )
           ],

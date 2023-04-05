@@ -1,5 +1,7 @@
+import 'package:cafe_app/models/Conference.dart';
 import 'package:cafe_app/screens/addOn_page.dart';
 import 'package:cafe_app/screens/cartscreen.dart';
+import 'package:cafe_app/screens/conference_screen.dart';
 import 'package:cafe_app/screens/login.dart';
 import 'package:cafe_app/screens/menu.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +20,7 @@ class _LoadingState extends State<Loading> {
 void _loadUserInfo() async {
   String token = await getToken();
   int userId = await getUserId();
-  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>MenuPage()), (route) => false);
+  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>ConferenceScreen()), (route) => false);
   // if(userId == '' || userId == null)
   // {
   //   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Home()), (route) => false);

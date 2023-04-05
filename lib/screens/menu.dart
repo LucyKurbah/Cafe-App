@@ -79,19 +79,14 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
       controller.changeHomeState(HomeState.normal);
     }
     });
-    
   }
 
   Future<void> retrieveProducts() async{
-    // userId = await getUserId();
-    print("World");
     ApiResponse response = await getProducts();
     if(response.error == null)
     {
       setState(() {
         _productList = response.data as List<dynamic>;
-       
-
         _loading = _loading ? !_loading : _loading;
       });
     }
@@ -143,7 +138,7 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
         //incrementCount();
         retrieveItems();
         _cartMessage = response.data.toString();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}"),duration: Duration(seconds: 1),));
         _loading = _loading ? !_loading : _loading;
       });
     }
@@ -155,7 +150,7 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
                                                 (route) => false);
     }
     else{
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}"),duration: Duration(seconds: 1)));
     }
   }
 
@@ -170,7 +165,7 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
         //incrementCount();
         retrieveItems();
         _cartMessage = response.data.toString();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}"),duration: Duration(seconds: 1)));
         _loading = _loading ? !_loading : _loading;
       });
     }
@@ -182,7 +177,7 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
                                                 (route) => false);
     }
     else{
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}"),duration: Duration(seconds: 1)));
     }
   }
 
@@ -320,7 +315,7 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
                                                 return ProductCard(
                                                     product: product,
                                                     press: () {                                       
-                                                            controller.addProductToCart(_productList[index]);
+                                                            // controller.addProductToCart(_productList[index]);
                                                             addCart(_productList[index]);
                                                             _cartTag = '_cartTag';                                           
                                                     } ,

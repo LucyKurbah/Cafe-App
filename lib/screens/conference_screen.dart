@@ -94,9 +94,6 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
       _selectedtimeTo.text = formattedTime;
       calculateHours(_selectedtimeFrom.text, formattedTime);
       checkDateTimeAvailability(_conferenceList[0].id, _date.text, _selectedtimeFrom.text, formattedTime);
-      print(_date.text);
-      print(_selectedtimeFrom.text);
-      print(formattedTime);
     });
   }
 
@@ -581,7 +578,6 @@ void checkDateTimeAvailability(int id,String date, String timeFrom, String timeT
             // setState(() {
             //    checkTable=true;
             // });
-           
         }
         else if(response.data==300)
         {

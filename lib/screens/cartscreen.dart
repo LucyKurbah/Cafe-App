@@ -10,9 +10,10 @@ import 'package:cafe_app/screens/login.dart';
 import '../models/Cart.dart';
 import 'package:get/get.dart';
 
+import 'home/components/cart_detailsview_card.dart';
+
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
-
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
@@ -25,14 +26,15 @@ class _CartScreenState extends State<CartScreen> {
   List<dynamic> _cartList = [].obs;
 
   double totalPrice = 0.0;
-  // RxDouble _totalCartAmount = 0.00.obs;
-  // final CartController cartController = CartController();
 
    Future<void>  goToPayment(_cartList, totalPrice) async{
     ApiResponse response = await saveOrder(_cartList, totalPrice);
     if(response.error == null)
     {
-      print("Payment Done");
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                                      builder: (context) => Home()
+                                                                ), 
+                                                (route) => false);
     }
     else if(response.error == ApiConstants.unauthorized){
             logoutUser();
@@ -40,7 +42,6 @@ class _CartScreenState extends State<CartScreen> {
                                                       builder: (context) => Home()
                                                                 ), 
                                                 (route) => false);
-     
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
@@ -206,7 +207,7 @@ class _CartScreenState extends State<CartScreen> {
     {
         retrieveCart();
         _cartMessage = response.data.toString();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}"),duration: Duration(seconds: 1)));
         _loading = _loading ? !_loading : _loading;
     }
     else if(response.error == ApiConstants.unauthorized){
@@ -218,7 +219,7 @@ class _CartScreenState extends State<CartScreen> {
       
     }
     else{
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}"),duration: Duration(seconds: 1)));
     }
   }
 
@@ -230,7 +231,7 @@ class _CartScreenState extends State<CartScreen> {
     {
          retrieveCart();
         _cartMessage = response.data.toString();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}"),duration: Duration(seconds: 1)));
         _loading = _loading ? !_loading : _loading;
     }
     else if(response.error == ApiConstants.unauthorized){
@@ -242,7 +243,7 @@ class _CartScreenState extends State<CartScreen> {
      
     }
     else{
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}"),duration: Duration(seconds: 1)));
     }
   }
 
@@ -256,132 +257,133 @@ class _CartScreenState extends State<CartScreen> {
           
             Container(),
             Positioned(
-              child:ListView.separated(
-                padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 115),   
-                itemCount: _cartList.length,
-                itemBuilder: (context, index) {
-                  final currentFlag = _cartList[index].flag;
-                  // Check if the current flag is different from the previous flag
-                  if (_cartList[index].flag == "I" && index == _cartList.indexWhere((item) => item.flag == "I")) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Divider(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text(
-                            "Add On ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white
-                            ),
-                          ),
-                        ),
-                        Divider(),
-                        CartCard(
-                          cart: _cartList[index],
-                          addItem: () {
-                            addCart(_cartList[index]);
-                          },
-                          removeItem: () {
-                            removeCart(_cartList[index]);
-                          },
-                        ),
-                      ],
-                    );
-                  }
-                  else  if (_cartList[index].flag == "T" && index == _cartList.indexWhere((item) => item.flag == "T"))
-                  {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Divider(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text(
-                            "Table",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white
-                            ),
-                          ),
-                        ),
-                        Divider(),
-                        CartCard(
-                          cart: _cartList[index],
-                          addItem: () {
-                            addCart(_cartList[index]);
-                          },
-                          removeItem: () {
-                            removeCart(_cartList[index]);
-                          },
-                        ),
-                      ],
-                    );
-                  }
-                  else  if (_cartList[index].flag == "F" && index == _cartList.indexWhere((item) => item.flag == "F"))
-                  {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Divider(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text(
-                            "Food Items",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white
-                            ),
-                          ),
-                        ),
-                        Divider(),
-                        CartCard(
-                          cart: _cartList[index],
-                          addItem: () {
-                            addCart(_cartList[index]);
-                          },
-                          removeItem: () {
-                            removeCart(_cartList[index]);
-                          },
-                        ),
-                      ],
-                    );
-                  }
-
-                   else {
-                    // If not, just display the CartCard
-                    return CartCard(
-                      cart: _cartList[index],
-                      addItem: () {
-                        addCart(_cartList[index]);
-                      },
-                      removeItem: () {
-                        removeCart(_cartList[index]);
-                      },
-                    );
-                  }
-                },
-                separatorBuilder: (context, index) => Divider(),
-              ) ,
-               
-              // child: ListView.builder(
-                
-              //   itemCount: _cartList.length,
-              //   shrinkWrap: true,
+              // child:ListView.builder(
               //   padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 115),   
+              //   itemCount: _cartList.length,
+              //   itemBuilder: (context, index) {
+              //     final currentFlag = _cartList[index].flag;
+                  // Check if the current flag is different from the previous flag
+              //     if (_cartList[index].flag == "T" && index == _cartList.indexWhere((item) => item.flag == "T"))
+              //     {
+              //       return Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Divider(),
+              //           Padding(
+              //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              //             child: Text(
+              //               "Table",
+              //               style: TextStyle(
+              //                 fontWeight: FontWeight.bold,
+              //                 color: Colors.white
+              //               ),
+              //             ),
+              //           ),
+              //           Divider(),
+              //           CartCard(
+              //             cart: _cartList[index],
+              //             addItem: () {
+              //               addCart(_cartList[index]);
+              //             },
+              //             removeItem: () {
+              //               removeCart(_cartList[index]);
+              //             },
+              //           ),
+              //         ],
+              //       );
+              //     }
+              //     else  if (_cartList[index].flag == "I" && index == _cartList.indexWhere((item) => item.flag == "I")) {
+              //       return Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Divider(),
+              //           Padding(
+              //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              //             child: Text(
+              //               "Add On ",
+              //               style: TextStyle(
+              //                 fontWeight: FontWeight.bold,
+              //                 color: Colors.white
+              //               ),
+              //             ),
+              //           ),
+              //           Divider(),
+              //           CartCard(
+              //             cart: _cartList[index],
+              //             addItem: () {
+              //               addCart(_cartList[index]);
+              //             },
+              //             removeItem: () {
+              //               removeCart(_cartList[index]);
+              //             },
+              //           ),
+              //         ],
+              //       );
+              //     }
+                   
+              //     else  if (_cartList[index].flag == "F" && index == _cartList.indexWhere((item) => item.flag == "F"))
+              //     {
+              //       return Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Divider(),
+              //           Padding(
+              //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              //             child: Text(
+              //               "Food Items",
+              //               style: TextStyle(
+              //                 fontWeight: FontWeight.bold,
+              //                 color: Colors.white
+              //               ),
+              //             ),
+              //           ),
+              //           Divider(),
+              //           CartCard(
+              //             cart: _cartList[index],
+              //             addItem: () {
+              //               addCart(_cartList[index]);
+              //             },
+              //             removeItem: () {
+              //               removeCart(_cartList[index]);
+              //             },
+              //           ),
+              //         ],
+              //       );
+              //     }
+
+              //      else {
+              //       // If not, just display the CartCard
+              //       return CartCard(
+              //         cart: _cartList[index],
+              //         addItem: () {
+              //           addCart(_cartList[index]);
+              //         },
+              //         removeItem: () {
+              //           removeCart(_cartList[index]);
+              //         },
+              //       );
+              //     }
+              //   },
+              //   separatorBuilder: (context, index) => Divider(),
+              // ) ,
+               
+              child: ListView.builder(
+                
+                itemCount: _cartList.length,
+                shrinkWrap: true,
+                padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 115),   
                             
-              //   itemBuilder: ((context, index) => 
-              //      CartCard(
-              //         cart: _cartList[index], 
-              //         addItem: (){
-              //             addCart(_cartList[index]);
-              //         }, 
-              //         removeItem: (){
-              //             removeCart(_cartList[index]);
-              //         })
-              //   ),
-              //  )
+                itemBuilder: ((context, index) => 
+                   CartCard(
+                      cart: _cartList[index], 
+                      addItem: (){
+                          addCart(_cartList[index]);
+                      }, 
+                      removeItem: (){
+                          removeCart(_cartList[index]);
+                      })
+                ),
+              )
             ),
             _buildBottom(),
         ],
@@ -501,7 +503,9 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                               
                                 onPressed: (){
-                                  goToPayment(_cartList, totalPrice);
+                                  // goToPayment(_cartList, totalPrice);
+                                  _loadUserInfo(context, totalPrice);
+                                 
                                 }, 
                                 child: Text("Checkout", style: TextStyle(fontSize: 16),),
                               ),
@@ -542,4 +546,142 @@ class _CartScreenState extends State<CartScreen> {
             );
           
   }
+
+  void _showCheckoutDetails(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.black,
+    builder: (BuildContext context) {
+      return Container(
+        padding: EdgeInsets.all(30),
+        height: MediaQuery.of(context).size.height / 2,
+        decoration: BoxDecoration(
+          color: Colors.grey[900],
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+        ),
+        child: Column(
+          children: [
+             ...List.generate(
+              _cartList.length,
+              (index) => CartDetailsViewCard(productItem: _cartList[index]),
+          ),
+         Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total: ${totalPrice}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _showPaymentDialog(context);
+                },
+                child: Text('Make Payment'),
+              ),
+            ],
+          )
+          ],
+        ),
+      );
+    },
+  );
 }
+
+  void _showPaymentDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      // Show a loading dialog for 1 second
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.of(context).pop(true);
+      });
+
+      return WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: Dialog(
+          backgroundColor: Colors.black,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+                SizedBox(width: 16.0),
+                Text(
+                  "Processing Payment...",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  ).then((value) {
+    if (value == true) {
+      // Show payment confirmation dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.black,
+            title: Text(
+              "Payment Done",
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // Navigator.of(context).pushNamed("/orders");
+                },
+                child: Text(
+                  "OK",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  });
+}
+
+void _loadUserInfo(context, totalPrice) async{
+  String token = await getToken();
+  int user_id = await getUserId();
+  if(token == ''  || token == null)
+  {
+    // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Login()), (route) => false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please Login first')));
+  }
+  else{
+    if(totalPrice == 0 || totalPrice == null)
+    {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No items in the cart')));
+    }
+    else if(user_id != null && user_id != 0)
+    {
+        _showCheckoutDetails(context);
+    }
+    else
+    {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please Login first')  ));
+    }
+  }
+}
+}
+

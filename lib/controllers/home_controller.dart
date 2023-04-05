@@ -25,6 +25,7 @@ class HomeController extends ChangeNotifier {
   double get totalPrice => _totalPrice;
 
   List<ProductItem> cart = [];
+  List<AddOnItem> cartAddOn = [];
   List<TableItem> cartTable = [];
 
   void changeHomeState(HomeState state) {
@@ -46,11 +47,21 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addAddOnToCart(AddOn product) {
+   
+    for (AddOnItem item in cartAddOn) {
+      if (item.product.title == product.title) {
+        item.increment();
+        notifyListeners();
+        return;
+      }
+    }
 
-  
+    cartAddOn.add(AddOnItem(product: product));
+    notifyListeners();
+  }
 
   void addTableToCart(TableModel table) {
-   
     for (TableItem item in cartTable) {
       if (item.table.table_name == table.table_name) {
         item.increment();

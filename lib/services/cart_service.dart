@@ -52,41 +52,47 @@ Future<ApiResponse> getCart() async{
 
 
 Future<ApiResponse> addToCart(Product product) async{
-  ApiResponse apiResponse = ApiResponse();
-  try {
+    ApiResponse apiResponse = ApiResponse();
     String token = await getToken();
     int userId = await getUserId();
-
-    final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
-                headers: {
-                    'Accept' : 'application/json',
-                    'Authorization' : 'Bearer $token'
-                },
-                body:{
-                       'user_id': userId.toString(),
-                        'food_id' : product.id.toString(),
-                        'food_price' : product.price.toString(),
-                        'food_quantity' : "1",
-                        'flag' : 'F'
-                    },   
-               );
-    switch(response.statusCode)
+    if(userId==0 || userId == null)
     {
-      case 200:
-        apiResponse.data =  "Added to cart";
-        print(apiResponse.data);
-        break;
-      case 401:
-        apiResponse.error = ApiConstants.unauthorized;
-        break;
-      default:
-         apiResponse.error = response.statusCode.toString();
-        break;
+       apiResponse.error ="Please log in first";
+    } 
+    else
+    {
+        try {
+        
+          final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
+                      headers: {
+                          'Accept' : 'application/json',
+                          'Authorization' : 'Bearer $token'
+                      },
+                      body:{
+                              'user_id': userId.toString(),
+                              'food_id' : product.id.toString(),
+                              'food_price' : product.price.toString(),
+                              'food_quantity' : "1",
+                              'flag' : 'F'
+                          },   
+                    );
+          switch(response.statusCode)
+          {
+            case 200:
+              apiResponse.data =  "Added to cart";
+              print(apiResponse.data);
+              break;
+            case 401:
+              apiResponse.error = ApiConstants.unauthorized;
+              break;
+            default:
+              apiResponse.error = response.statusCode.toString();
+              break;
+          }
+        } catch (e) {
+          apiResponse.error =e.toString();
+        }
     }
-  } catch (e) {
-     apiResponse.error =e.toString();
-  }
-
   return apiResponse;
 }
 
@@ -395,7 +401,7 @@ Future<ApiResponse> saveOrder(_cartList, totalPrice) async{
     String token = await getToken();
     int userId = await getUserId();
 
-    final response = await http.post(Uri.parse(ApiConstants.getTotalUrl),
+    final response = await http.post(Uri.parse(ApiConstants.saveOrder),
                 headers: {
                     'Accept' : 'application/json',
                     'Authorization' : 'Bearer $token'
@@ -404,12 +410,12 @@ Future<ApiResponse> saveOrder(_cartList, totalPrice) async{
                         'user_id': userId.toString(),
                     },   
                );
-
+    print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:
         apiResponse.data = (jsonDecode(response.body)) ;
-        
+        print(apiResponse.data);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;

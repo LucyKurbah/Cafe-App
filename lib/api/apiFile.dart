@@ -23,7 +23,7 @@ class ApiConstants {
   static String addCartUrl = '$baseUrl/cart/add';
   static String removeCartUrl = '$baseUrl/cart/remove';
   static String getTotalUrl = '$baseUrl/cart/getTotal'; 
-    static String saveOrder = '$baseUrl/order/saveDetails';
+  static String saveOrder = '$baseUrl/order/saveDetails';
   static String imagePath = "http://"+right_now_ip+"/";
   static String imageUrl = "$baseUrl/$imagePath";
   static String serverError = 'Servor Error';

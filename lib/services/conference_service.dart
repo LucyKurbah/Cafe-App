@@ -37,24 +37,26 @@ Future<ApiResponse> getConference() async{
   } catch (e) {
      apiResponse.error =e.toString();
   }
-
   return apiResponse;
 }
 
 
 
-Future<ApiResponse> checkConferenceHallDetails(id, date, timeFrom, timeTo) async{
+Future<ApiResponse> checkConferenceHallDetails(id, time_from, time_to, date) async{
   
   ApiResponse apiResponse = ApiResponse();
   try {
+   
     String token = await getToken();
     int userId = await getUserId();
     String formattedDate=convertDateToPostgres(date);
+    String timeFrom=convertTimeToPostgres(time_from,date);
+     String timeTo=convertTimeToPostgres(time_to,date);
+    print(userId);
     print(id);
     print(timeFrom);
     print(timeTo);
     print(formattedDate.toString());
-  
     final response = await http.post(Uri.parse(ApiConstants.checkConferenceDetailsUrl),
                 headers: {
                     'Accept' : 'application/json',
