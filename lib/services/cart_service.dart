@@ -216,43 +216,50 @@ Future<ApiResponse> addTableToCart(TableModel table, String totalPrice, String d
   return apiResponse;
 }
 
-Future<ApiResponse> addConferenceToCart(String totalPrice, String date, String timeFrom, String timeTo) async{
+Future<ApiResponse> addConferenceToCart(id, String totalPrice, String date, String timeFrom, String timeTo) async{
   ApiResponse apiResponse = ApiResponse();
-  try {
-    String token = await getToken();
-    int userId = await getUserId();
-   
-    final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
-                headers: {
-                    'Accept' : 'application/json',
-                    'Authorization' : 'Bearer $token'
-                },
-                body:{
-                        'user_id': userId.toString(),
-                        'table_price' : (totalPrice),
-                        'table_date' : date,
-                        'table_time_from' : timeFrom,
-                        'table_time_to' : timeTo,
-                        'flag': 'C'
-                    },   
-               );
-    print(response.statusCode);
-    switch(response.statusCode)
-    {
-      case 200:
-       apiResponse.data =  jsonDecode(response.body);
-        // apiResponse.data =  "Added to cart";
-        print(apiResponse.data);
-        break;
-      case 401:
-        apiResponse.error = ApiConstants.unauthorized;
-        break;
-      default:
-        apiResponse.error = response.statusCode.toString();
-        break;
-    }
-  } catch (e) {
-     apiResponse.error =e.toString();
+  String token = await getToken();
+  int userId = await getUserId();
+  if(userId != 0 && userId != null)
+  {
+        try {
+        final response = await http.post(Uri.parse(ApiConstants.addCartUrl),
+                    headers: {
+                        'Accept' : 'application/json',
+                        'Authorization' : 'Bearer $token'
+                    },
+                    body:{
+                            'user_id': userId.toString(),
+                            'conference_id': id.toString(),
+                            'conference_price' : totalPrice,
+                            'conference_date' : date,
+                            'conference_time_from' : timeFrom,
+                            'conference_time_to' : timeTo,
+                            'flag': 'C'
+                        },   
+                  );
+        switch(response.statusCode)
+        {
+          case 200:
+          apiResponse.data =  jsonDecode(response.body);
+            // apiResponse.data =  "Added to cart";
+            print(apiResponse.data);
+            break;
+          case 401:
+            apiResponse.error = ApiConstants.unauthorized;
+            break;
+          default:
+            apiResponse.error = response.statusCode.toString();
+            break;
+        }
+      } catch (e) {
+          apiResponse.error =e.toString();
+      }
+      
+  }
+  else
+  {
+    apiResponse.error = "User not logged in";
   }
   return apiResponse;
 }
@@ -318,6 +325,10 @@ Future<ApiResponse> decrementCart(Cart cart) async{
     }else if(cart.flag.toString()=='T')
     {
       id='table_id';
+    }
+    else if(cart.flag.toString()=='C')
+    {
+      id='conference_id';
     }
     else
     {
@@ -394,7 +405,6 @@ Future<ApiResponse> getTotal() async{
   return apiResponse;
 }
 
-
 Future<ApiResponse> saveOrder(_cartList, totalPrice) async{
   ApiResponse apiResponse = ApiResponse();
  try {
@@ -431,3 +441,37 @@ Future<ApiResponse> saveOrder(_cartList, totalPrice) async{
   return apiResponse;
 }
 
+Future<ApiResponse> makePayment() async {
+  ApiResponse apiResponse = ApiResponse();
+  String token = await getToken();
+  int userId = await getUserId();
+  try {
+    final response = await http.post(Uri.parse(ApiConstants.makePayment),
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer $token'
+                },
+                body:{
+                        'user_id': userId.toString(),
+                    },   
+               );
+
+    if (response.statusCode == 200) {
+      if(response.body == "Y")
+      {
+        apiResponse.data =200; //Payment successful
+      }
+      else {
+        apiResponse.error ="Payment failed";
+    }
+      
+    } else {
+      apiResponse.error ="Payment failed";
+      // throw Exception("Payment failed");
+    }
+    return apiResponse;
+  } catch (e) {
+    // Handle the error
+    throw Exception(e.toString());
+  }
+}

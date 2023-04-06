@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cafe_app/services/table_service.dart';
 import 'package:cafe_app/services/user_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import '../api/apiFile.dart';
 import '../models/Order.dart';
 import '../models/Conference.dart';
@@ -40,6 +41,20 @@ Future<ApiResponse> getConference() async{
   return apiResponse;
 }
 
+convertDateToPostgres(bookDate){
+    DateTime date = DateFormat('dd-MM-yyyy').parse(bookDate);
+    print(date);
+    String formattedDate = '${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return('${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}');
+   
+  }
+
+convertTimeToPostgres(time,bookDate){
+    DateTime date = DateFormat('dd-MM-yyyy').parse(bookDate);
+    DateTime ptime = DateFormat.jm().parse(time);
+    DateTime postgresDateTime = DateTime(date.year, date.month, date.day, ptime.hour, ptime.minute, ptime.second);
+    return postgresDateTime.toString();
+  }
 
 
 Future<ApiResponse> checkConferenceHallDetails(id, time_from, time_to, date) async{
@@ -51,12 +66,7 @@ Future<ApiResponse> checkConferenceHallDetails(id, time_from, time_to, date) asy
     int userId = await getUserId();
     String formattedDate=convertDateToPostgres(date);
     String timeFrom=convertTimeToPostgres(time_from,date);
-     String timeTo=convertTimeToPostgres(time_to,date);
-    print(userId);
-    print(id);
-    print(timeFrom);
-    print(timeTo);
-    print(formattedDate.toString());
+    String timeTo=convertTimeToPostgres(time_to,date);
     final response = await http.post(Uri.parse(ApiConstants.checkConferenceDetailsUrl),
                 headers: {
                     'Accept' : 'application/json',
@@ -64,19 +74,16 @@ Future<ApiResponse> checkConferenceHallDetails(id, time_from, time_to, date) asy
                 },
                 body: {
                       'userId': userId.toString(),
-                      'conference_id' : id,
+                      'conference_id' : id.toString(),
                       'conference_time_from' : timeFrom,
                       'conference_time_to' : timeTo,
                       'conference_date' : formattedDate.toString()
                     },
                );
-    print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:
-      print("Hello");
-        apiResponse.data =  jsonDecode(response.body).map((p) => OrderModel.fromJson(p)).toList();
-        print(apiResponse.data);
+        apiResponse.data =  jsonDecode(response.body);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;

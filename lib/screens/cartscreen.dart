@@ -1,6 +1,7 @@
 
 import 'package:cafe_app/screens/home/components/cart_card.dart';
 import 'package:flutter/material.dart';
+import '../widgets/custom_widgets.dart';
 import 'home.dart';
 import 'package:cafe_app/services/api_response.dart';
 import 'package:cafe_app/api/apiFile.dart';
@@ -9,7 +10,6 @@ import 'package:cafe_app/services/cart_service.dart';
 import 'package:cafe_app/screens/login.dart';
 import '../models/Cart.dart';
 import 'package:get/get.dart';
-
 import 'home/components/cart_detailsview_card.dart';
 
 class CartScreen extends StatefulWidget {
@@ -246,7 +246,34 @@ class _CartScreenState extends State<CartScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${response.error}"),duration: Duration(seconds: 1)));
     }
   }
-
+  
+  Future<bool> _makePaymentAPI() async {
+    userId = await getUserId();
+    ApiResponse response = await makePayment();
+    try {
+    if(response.error == null)
+      {
+        if(response.data == 200)
+        {
+            showSnackBar(title: 'Payment Done', message: '');
+            return true;
+        }
+        else
+        {
+          showSnackBar(title: 'error', message: 'Payment Failed! Please Try Again');
+           return false;
+        }
+      }
+      else
+      {
+        return false;
+      }
+      
+    } catch (e) {
+      // Handle the error
+      throw Exception(e.toString());
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -600,64 +627,83 @@ class _CartScreenState extends State<CartScreen> {
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      // Show a loading dialog for 1 second
-      Future.delayed(Duration(seconds: 1), () {
-        Navigator.of(context).pop(true);
-      });
-
-      return WillPopScope(
-        onWillPop: () => Future.value(false),
-        child: Dialog(
-          backgroundColor: Colors.black,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-                SizedBox(width: 16.0),
-                Text(
-                  "Processing Payment...",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  ).then((value) {
-    if (value == true) {
-      // Show payment confirmation dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.black,
-            title: Text(
-              "Payment Done",
-              style: TextStyle(color: Colors.white),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // Navigator.of(context).pushNamed("/orders");
-                },
-                child: Text(
-                  "OK",
-                  style: TextStyle(color: Colors.white),
+      return FutureBuilder(
+        future: _makePaymentAPI(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show a loading dialog while waiting for the API response
+            return WillPopScope(
+              onWillPop: () => Future.value(false),
+              child: Dialog(
+                backgroundColor: Colors.black,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                      SizedBox(width: 16.0),
+                      Text(
+                        "Processing Payment...",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          );
+            );
+          } else if (snapshot.hasError) {
+            // Show an error dialog if the API call fails
+            return AlertDialog(
+              backgroundColor: Colors.black,
+              title: Text(
+                "Payment Error",
+                style: TextStyle(color: Colors.white),
+              ),
+              content: Text(
+                "An error occurred while processing your payment. Please try again later.",
+                style: TextStyle(color: Colors.white),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    "OK",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            // Show payment confirmation dialog if the API call succeeds
+            return AlertDialog(
+              backgroundColor: Colors.black,
+              title: Text(
+                "Payment Done",
+                style: TextStyle(color: Colors.white),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Navigator.of(context).pushNamed("/orders");
+                  },
+                  child: Text(
+                    "OK",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          }
         },
       );
-    }
-  });
+    },
+  );
 }
 
 void _loadUserInfo(context, totalPrice) async{

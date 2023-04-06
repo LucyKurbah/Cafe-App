@@ -96,7 +96,7 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
         //add the counter here
         //incrementCount();
         _cartMessage = response.data.toString();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}"),duration:Duration(seconds: 1)));
         _loading = _loading ? !_loading : _loading;
       });
     }
@@ -140,7 +140,7 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                               AnimatedPositioned(
                                 duration: const Duration(milliseconds: 500),
                                   top: controller.homeState == HomeState.normal
-                                    ? 10
+                                    ? 50
                                     : -(constraints.maxHeight -
                                         100 * 2 -
                                         50),
@@ -175,36 +175,36 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
                                               addCart(_productList[index]);
                                               _cartTag = '_cartTag';                                           
                                       },
-                                      addItem: (){ print("Added to Cart");},
+                                      addItem: (){  addCart(_productList[index]);},
                                       removeItem: (){print("Deleted");}                                     
                                     ),
                                   ),
                                 ),
                               ),
                               // Card Panel
-                              AnimatedPositioned(
-                                duration: const Duration(milliseconds: 500),
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height: 80,                                  
-                                child: Container(
-                                  padding: const EdgeInsets.all(20),                                 
-                                  decoration: const BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Row(
-                                        children: [
-                                          Text("1", style: TextStyle(color: Colors.white),),
-                                          Text(" Add On", style: TextStyle(color: Colors.white),),
-                                          Expanded(child: Container()), 
-                                          Text("Next", style: TextStyle(color: Colors.white),)
-                                        ],
-                                    )
-                                ),
-                              ),
+                              // AnimatedPositioned(
+                              //   duration: const Duration(milliseconds: 500),
+                              //   bottom: 0,
+                              //   left: 0,
+                              //   right: 0,
+                              //   height: 80,                                  
+                              //   child: Container(
+                              //     padding: const EdgeInsets.all(20),                                 
+                              //     decoration: const BoxDecoration(
+                              //             color: Colors.grey,
+                              //             borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                              //     ),
+                              //     alignment: Alignment.center,
+                              //     child: Row(
+                              //           children: [
+                              //             Text("1", style: TextStyle(color: Colors.white),),
+                              //             Text(" Add On", style: TextStyle(color: Colors.white),),
+                              //             Expanded(child: Container()), 
+                              //             Text("Next", style: TextStyle(color: Colors.white),)
+                              //           ],
+                              //       )
+                              //   ),
+                              // ),
                             ],
                           );
                         },
@@ -227,12 +227,32 @@ class _AddOnPageState extends State<AddOnPage> with TickerProviderStateMixin{
               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => Home()));
             }, 
             icon: Icon(Icons.arrow_back), color: Colors.white,),
-            actions: [
-              IconButton(
-                onPressed: (){
-                }, 
-                icon: Icon(Icons.notifications_none))
-            ],
+             actions: [
+            Padding(
+              padding: const EdgeInsets.only(right:defaultPadding, left: defaultPadding),
+              child: Center(
+                child: Badge(
+                  badgeStyle: BadgeStyle(
+                    badgeColor: Colors.black
+                  ),
+                  badgeContent: Consumer<HomeController>(
+                    builder: (context, value,child) { 
+                      return Text(value.getCounter().toString(), style: TextStyle(color: Colors.black));
+                    },
+                  
+                  ),
+                  child:  IconButton(
+                              icon: Icon(Icons.shopping_bag_outlined, size: 30,), 
+                              color: Colors.white,
+                              onPressed: () { 
+                                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
+                              },
+                          ),
+                ),
+              ),
+            )
+
+          ],
       );
   }
 

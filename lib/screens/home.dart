@@ -7,6 +7,7 @@ import '../widgets/custom_widgets.dart';
 import 'home_card.dart';
 import 'cartscreen.dart';
 import 'login.dart';
+import 'my_orders.dart';
 import 'settings.dart';
 import 'profile.dart';
 import 'dart:math';
@@ -136,6 +137,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                 ListTile(
                                   onTap: (){
                                     //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Profile()));
+                                      Get.to(MyOrders(), transition: Transition.rightToLeftWithFade);
+                                  },
+                                  leading: Icon(
+                                    Icons.person, 
+                                    color: Colors.white,),
+                                  title: Text(
+                                    "My Orders", 
+                                    style: TextStyle(
+                                      color: Colors.white),),
+                                ),
+                                ListTile(
+                                  onTap: (){
+                                    //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Profile()));
                                       Get.to(Profile(), transition: Transition.rightToLeftWithFade);
                                   },
                                   leading: Icon(
@@ -146,19 +160,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                     style: TextStyle(
                                       color: Colors.white),),
                                 ),
-                                ListTile(
-                                  onTap: (){
-                                    //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Setting()));
-                                     Get.to(Setting(), transition: Transition.rightToLeftWithFade);
-                                  },
-                                  leading: Icon(
-                                        Icons.settings, 
-                                        color: Colors.white,),
-                                  title: Text(
-                                            "Settings", 
-                                            style: TextStyle(
-                                                color: Colors.white),),
-                                ),
+                                // ListTile(
+                                //   onTap: (){
+                                //     //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Setting()));
+                                //      Get.to(Setting(), transition: Transition.rightToLeftWithFade);
+                                //   },
+                                //   leading: Icon(
+                                //         Icons.settings, 
+                                //         color: Colors.white,),
+                                //   title: Text(
+                                //             "Settings", 
+                                //             style: TextStyle(
+                                //                 color: Colors.white),),
+                                // ),
                                 ListTile(
                                 
                                   leading: Icon(isLoggedIn?

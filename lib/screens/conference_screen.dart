@@ -42,7 +42,6 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
 
   @override
   void initState(){
-    
     super.initState();
     retrieveConference();
   }
@@ -93,7 +92,7 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
     setState(() {
       _selectedtimeTo.text = formattedTime;
       calculateHours(_selectedtimeFrom.text, formattedTime);
-      checkDateTimeAvailability(_conferenceList[0].id, _date.text, _selectedtimeFrom.text, formattedTime);
+      checkDateTimeAvailability(_conferenceList[0].id, _selectedtimeFrom.text, formattedTime);
     });
   }
 
@@ -104,16 +103,12 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
     return postgresDateTime.toString();
   }
 
-  
-  Future<void> addCart( String totalPrice, String date, String timeFrom, String timeTo) async{
+  Future<void> addCart(id, String totalPrice, String date, String timeFrom, String timeTo) async{
     userId = await getUserId();
-
     DateTime time_from = DateFormat('h:mm a').parse(timeFrom);
     DateTime time_to = DateFormat('h:mm a').parse(timeTo);
     String bookDate =convertTimeToPostgres(timeFrom,date);
-
-    ApiResponse response = await addConferenceToCart(totalPrice, bookDate, time_from.toString(), time_to.toString());
-
+    ApiResponse response = await addConferenceToCart(id, totalPrice, bookDate, time_from.toString(), time_to.toString());
     if(response.error == null)
     {
       if(response.data==200)
@@ -121,8 +116,8 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
           setState(() {
             //add the counter here
             //incrementCount();
-            _cartMessage = "Table added to Cart";
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}")));
+            _cartMessage = "Conference Hall added to Cart";
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_cartMessage}"),duration: Duration(seconds: 1)));
             _loading = _loading ? !_loading : _loading;
             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
                                                           builder: (context) => AddOnPage()
@@ -204,18 +199,9 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
                                   Icon(Icons.star, color: Colors.grey[600], size: 20),
                                   Icon(Icons.star, color: Colors.grey[600], size: 20),
                                 ],
-                              ),
-                              SizedBox(height: 20,),
-
-                              Text("No of seats: ",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight : FontWeight.w500,
-                                    color: Colors.white.withOpacity(0.8)
-                                  )
-                              ),
+                              ),              
                               SizedBox(height: 20),
-                              Text("PRICE: Rs. ",
+                               Text(_conferenceList.isNotEmpty?"PRICE: Rs. ${_conferenceList[0].price} /hr":"",
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w500,
@@ -252,9 +238,8 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
                                                 lastDate: DateTime(2024));
                                         if (pickeddate != null) {
                                           setState(() {
-                                            _date.text =
-                                                DateFormat('dd-MM-yyyy')
-                                                    .format(pickeddate);
+                                            _date.text = DateFormat('dd-MM-yyyy').format(pickeddate);
+                                            t_date = DateFormat('yyyy-MM-dd').format(pickeddate);
                                           });
                                         }
                                       },
@@ -424,7 +409,7 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
                                                           ),
                                                           onPressed:  (){
                                                             // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
-                                                             addCart(noOfHours.text, t_date, _selectedtimeFrom.text.toString(), _selectedtimeTo.text.toString());
+                                                             addCart(_conferenceList.isNotEmpty?_conferenceList[0].id:0,noOfHours.text, t_date, _selectedtimeFrom.text.toString(), _selectedtimeTo.text.toString());
                                                             },
                                                           );
                                                 }
@@ -496,23 +481,31 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
       {
         hours = 1;
       }
-      noOfHours.text = (hours * _conferenceList[0].price).toString();
+      var price =_conferenceList.isNotEmpty?_conferenceList[0].price:1;
+      noOfHours.text = (hours * price).toString();
       // print('The difference between $timeString1 and $timeString2 is $hours hours and $minutes minutes');
    }
+  
   buildAppBar(context) {
     return AppBar(
           backgroundColor: Colors.black,
+          leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right:defaultPadding, left: defaultPadding),
               child: Center(
                 child: Badge(
                   badgeStyle: BadgeStyle(
-                    badgeColor: Color(0xffe57734)
+                    badgeColor: Colors.black
                   ),
                   badgeContent: Consumer<HomeController>(
                     builder: (context, value,child) { 
-                      return Text(value.getCounter().toString(), style: TextStyle(color: Colors.white));
+                      return Text(value.getCounter().toString(), style: TextStyle(color: Colors.black));
                     },
                   
                   ),
@@ -558,28 +551,25 @@ class _ConferenceScreenState extends State<ConferenceScreen> {
     }
   }
 
-void checkDateTimeAvailability(int id,String date, String timeFrom, String timeTo)  async {
-    ApiResponse response = await checkConferenceHallDetails(id, timeFrom, timeTo, date);
-    print("Check");
-    print(response.data);
+  void checkDateTimeAvailability(id, String timeFrom, String timeTo)  async {
+    ApiResponse response = await checkConferenceHallDetails(id, timeFrom, timeTo, _date.text);
     if (response.error == null) {
+      
       if(response.data != null)
       {
-        print("object");
-        print(response.data);
         if(response.data.toString()=="VE")
         {
           print("Validation Error");
           checkTable=false;
         }
-        else if(response.data==200)
+        else if(response.data=="Y")
         {
             print("Time and date available");
-            // setState(() {
-            //    checkTable=true;
-            // });
+            setState(() {
+               checkTable=true;
+            });
         }
-        else if(response.data==300)
+        else if(response.data=="X")
         {
             print("Time and date not available");
             checkTable=false;
