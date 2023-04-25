@@ -1,17 +1,18 @@
+import 'package:cafe_app/screens/orders/my_orders.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:firebase_core/firebase_core.dart';
-import 'package:cafe_app/screens/menu.dart';
+import 'package:cafe_app/screens/menu/menu.dart';
 import 'package:provider/provider.dart';
 import 'controllers/home_controller.dart';
-import 'screens/table_page.dart';
-import 'screens/cartscreen.dart';
-import 'screens/conference_screen.dart';
-import 'screens/loading.dart';
+import 'screens/table/table_page.dart';
+import 'screens/cart/cartscreen.dart';
+import 'screens/conference/conference_screen.dart';
+import 'screens/home/loading.dart';
 import 'package:get/get.dart';
-import 'screens/login.dart';
-import 'screens/register.dart';
+import 'screens/user/login.dart';
+import 'screens/user/register.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel', //id
@@ -96,6 +97,8 @@ class _MyAppState extends State<MyApp> {
                           '/profile': (context) => CartScreen(),
                           '/login': (context) => Login(),
                           '/signup': (context) => Register(),
+                          '/orders': (context) => MyOrders(),
+
                         
                       
                       },
