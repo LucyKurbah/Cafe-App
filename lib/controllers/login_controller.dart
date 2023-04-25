@@ -1,4 +1,4 @@
-import 'package:cafe_app/screens/login.dart';
+import 'package:cafe_app/screens/user/login.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,7 +6,7 @@ import 'package:cafe_app/services/api_response.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
 import 'package:cafe_app/widgets/custom_widgets.dart';
-import '../screens/home.dart';
+import '../screens/home/home.dart';
 
 class LoginController extends GetxController{
   TextEditingController  txtEmail = TextEditingController();

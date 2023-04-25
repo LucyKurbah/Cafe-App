@@ -16,7 +16,6 @@ import 'api_response.dart'; // replace with the name of your order model
 //       Order(id: 3, total: 10.0),
 //     ];
 //   }
-
   
 Future<ApiResponse> getOrders() async{
   ApiResponse apiResponse = ApiResponse();
@@ -24,7 +23,7 @@ Future<ApiResponse> getOrders() async{
  try {
     String token = await getToken();
     int userId = await getUserId();
-  
+ 
     final response = await http.post(Uri.parse(ApiConstants.getOrdersUrl),
                 headers: {
                     'Accept' : 'application/json',
@@ -37,13 +36,62 @@ Future<ApiResponse> getOrders() async{
 
     switch(response.statusCode)
     {
+      
       case 200:
-           print(response.statusCode);
+      
         if(response.body =='305'){
           apiResponse.data = '';
         }
+        else if(response.body == '400'){
+  
+          apiResponse.error = ApiConstants.notLoggedIn;
+        }
         else{
-          print(response.body);
+          
+          apiResponse.data =  jsonDecode(response.body).toList();
+        } 
+        break;
+      case 401:
+        apiResponse.error = ApiConstants.unauthorized;
+        break;
+      default:
+         apiResponse.error = response.statusCode.toString();
+        break;
+    }
+  } catch (e) {
+     apiResponse.error =e.toString();
+  }
+  return apiResponse;
+}
+
+Future<ApiResponse> getOrdersDetails(order_id) async{
+  ApiResponse apiResponse = ApiResponse();
+
+ try {
+    String token = await getToken();
+    int userId = await getUserId();
+ 
+    final response = await http.post(Uri.parse(ApiConstants.getOrdersDetailsUrl),
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer $token'
+                },
+                body:{
+                       'user_id': userId.toString(),
+                       'order_id' : order_id.toString(),
+                    },   
+               );
+
+    switch(response.statusCode)
+    {
+      case 200:
+        if(response.body =='305'){
+          apiResponse.data = '';
+        }
+        else if(response.body == '400'){
+          apiResponse.error = ApiConstants.notLoggedIn;
+        }
+        else{
           apiResponse.data =  jsonDecode(response.body).map((p) => Order.fromJson(p)).toList();
         } 
         break;

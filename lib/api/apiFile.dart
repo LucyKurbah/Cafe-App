@@ -13,6 +13,7 @@ class ApiConstants {
   static String forgotPasswordUrl = '$baseUrl/forgotPassword';
   static String logoutUrl = '$baseUrl/logout';
   static String userUrl = '$baseUrl/user';
+  static String getProfileUrl = '$baseUrl/getProfile';
   static String itemUrl = '$baseUrl/getFoodItems';
   static String getAddOnUrl = '$baseUrl/getItems';
   static String tableUrl = '$baseUrl/getTables';
@@ -25,10 +26,12 @@ class ApiConstants {
   static String getTotalUrl = '$baseUrl/cart/getTotal'; 
   static String saveOrder = '$baseUrl/order/saveDetails';
   static String makePayment = '$baseUrl/makePayment';
-  static String getOrdersUrl = '$baseUrl/order/getOrders';
+  static String getOrdersUrl = '$baseUrl/order/getOrdersList';
+  static String getOrdersDetailsUrl = '$baseUrl/order/getOrdersDetails';
   static String imagePath = "http://"+right_now_ip+"/";
   static String imageUrl = "$baseUrl/$imagePath";
   static String serverError = 'Servor Error';
   static String unauthorized = 'Unauthorized';
   static String somethingWentWrong = 'Something went wrong';
+  static String notLoggedIn = 'Please log in first!';
 }

@@ -2,15 +2,15 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cafe_app/services/api_response.dart';
-import '../screens/login.dart';
+import '../screens/user/login.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
 import 'package:cafe_app/widgets/custom_widgets.dart';
-import '../screens/home.dart';
+import '../screens/home/home.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
 import 'package:cafe_app/widgets/custom_widgets.dart';
-import '../screens/home.dart';
+import '../screens/home/home.dart';
 
 
 class ForgotPasswordController extends GetxController{

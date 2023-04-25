@@ -5,7 +5,7 @@ import 'package:cafe_app/services/api_response.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
 import 'package:cafe_app/widgets/custom_widgets.dart';
-import '../screens/home.dart';
+import '../screens/home/home.dart';
 
 class RegisterController extends GetxController{
 

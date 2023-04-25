@@ -68,6 +68,10 @@ Future<ApiResponse> getTableDetails(table_id, timeFrom, timeTo, bookDate) async{
     String time_from = (convertTimeToPostgres(timeFrom,bookDate));
     String time_to = (convertTimeToPostgres(timeTo,bookDate));
 
+    print(time_from);
+    print(time_to);
+    print(formattedDate);
+
     final response = await http.post(Uri.parse(ApiConstants.getTableDetailsUrl),
                 headers: {
                     'Accept' : 'application/json',

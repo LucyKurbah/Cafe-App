@@ -1,154 +1,147 @@
-// import 'package:cafe_app/constraints/constants.dart';
-// import 'package:cafe_app/controllers/home_controller.dart';
-// import 'package:cafe_app/models/Product.dart';
-// import 'package:cafe_app/screens/details/details_screen.dart';
-// import 'package:flutter/material.dart';
+import 'package:cafe_app/screens/menu/coffee_card.dart';
+import 'package:flutter/material.dart';
 
-// import 'components/cart_details_view.dart';
-// import 'components/cart_short_view.dart';
-// import 'components/header.dart';
-// import 'components/product_card.dart';
+ class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
-// // Today i will show you how to implement the animation
-// // So starting project comes with the UI
-// // Run the app
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-// class HomeScreen extends StatelessWidget {
-//   final controller = HomeController();
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
 
-//   void _onVerticalGesture(DragUpdateDetails details) {
-//     if (details.primaryDelta! < -0.7) {
-//       controller.changeHomeState(HomeState.cart);
-//     } else if (details.primaryDelta! > 12) {
-//       controller.changeHomeState(HomeState.normal);
-//     }
-//   }
+  late TabController tabController;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       body: SafeArea(
-//         bottom: false,
-//         child: Container(
-//           color: Color(0xFFEAEAEA),
-//           child: AnimatedBuilder(
-//               animation: controller,
-//               builder: (context, _) {
-//                 return LayoutBuilder(
-//                   builder: (context, BoxConstraints constraints) {
-//                     return Stack(
-//                       children: [
-//                         AnimatedPositioned(
-//                           duration: panelTransition,
-//                           top: controller.homeState == HomeState.normal
-//                               ? headerHeight
-//                               : -(constraints.maxHeight -
-//                                   cartBarHeight * 2 -
-//                                   headerHeight),
-//                           left: 0,
-//                           right: 0,
-//                           height: constraints.maxHeight -
-//                               headerHeight -
-//                               cartBarHeight,
-//                           child: Container(
-//                             padding: const EdgeInsets.symmetric(
-//                                 horizontal: defaultPadding),
-//                             decoration: BoxDecoration(
-//                               color: Colors.white,
-//                               borderRadius: const BorderRadius.only(
-//                                 bottomLeft:
-//                                     Radius.circular(defaultPadding * 1.5),
-//                                 bottomRight:
-//                                     Radius.circular(defaultPadding * 1.5),
-//                               ),
-//                             ),
-//                             child: GridView.builder(
-//                               itemCount: demo_products.length,
-//                               gridDelegate:
-//                                   SliverGridDelegateWithFixedCrossAxisCount(
-//                                 crossAxisCount: 2,
-//                                 childAspectRatio: 0.75,
-//                                 mainAxisSpacing: defaultPadding,
-//                                 crossAxisSpacing: defaultPadding,
-//                               ),
-//                               itemBuilder: (context, index) => ProductCard(
-//                                 product: demo_products[index],
-//                                 press: () {
-//                                   Navigator.push(
-//                                     context,
-//                                     PageRouteBuilder(
-//                                       transitionDuration:
-//                                           const Duration(milliseconds: 500),
-//                                       reverseTransitionDuration:
-//                                           const Duration(milliseconds: 500),
-//                                       pageBuilder: (context, animation,
-//                                               secondaryAnimation) =>
-//                                           FadeTransition(
-//                                         opacity: animation,
-//                                         child: DetailsScreen(
-//                                           product: demo_products[index],
-//                                           onProductAdd: () {
-//                                             controller.addProductToCart(
-//                                                 demo_products[index]);
-//                                           },
-//                                         ),
-//                                       ),
-//                                     ),
-//                                   );
-//                                 },
-//                                 addItem:() {
-                                  
-//                                 },
-//                                 removeItem:() {
-                                  
-//                                 },
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                         // Card Panel
-//                         AnimatedPositioned(
-//                           duration: panelTransition,
-//                           bottom: 0,
-//                           left: 0,
-//                           right: 0,
-//                           height: controller.homeState == HomeState.normal
-//                               ? cartBarHeight
-//                               : (constraints.maxHeight - cartBarHeight),
-//                           child: GestureDetector(
-//                             onVerticalDragUpdate: _onVerticalGesture,
-//                             child: Container(
-//                               padding: const EdgeInsets.all(defaultPadding),
-//                               color: Color(0xFFEAEAEA),
-//                               alignment: Alignment.topLeft,
-//                               child: AnimatedSwitcher(
-//                                 duration: panelTransition,
-//                                 child: controller.homeState == HomeState.normal
-//                                     ? CardShortView(controller: controller)
-//                                     : CartDetailsView(controller: controller),
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                         // Header
-//                         AnimatedPositioned(
-//                           duration: panelTransition,
-//                           top: controller.homeState == HomeState.normal
-//                               ? 0
-//                               : -headerHeight,
-//                           right: 0,
-//                           left: 0,
-//                           height: headerHeight,
-//                           child: HomeHeader(),
-//                         ),
-//                       ],
-//                     );
-//                   },
-//                 );
-//               }),
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  void initState() {
+    // TODO: implement initState
+    tabController = TabController(length: 4, vsync: this);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.all(20),
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 620,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(Icons.menu,color: Colors.white,),
+                      ),
+                      // Image.asset("Images/cafe3.jpg",
+                      //       height: 50,
+                      //       width: 50,
+                      //   )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text("Find Best Cafe for you", 
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold
+                        ),),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 6.8),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.blueGrey,
+                      borderRadius: BorderRadius.circular(15),
+                     ),
+                     child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Find your Coffee...",
+                        hintStyle: TextStyle(
+                          color: Colors.white
+                          ),
+                          border: InputBorder.none,
+                          prefixIcon: Icon(Icons.search,color: Colors.grey[600],)
+                        ),
+                     )
+                     ,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TabBar(
+                    controller: tabController,
+                    isScrollable: true,
+                    labelColor: Color(0xffd17842),
+                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                    unselectedLabelColor: Color(0xff3c4846),
+                    indicator: CircleTabIndicator(color: Color(0xffd17842), radius : 4),
+                    tabs: [
+                      Tab(
+                        text: "Table",
+                      ),
+                      Tab(
+                        text: "Conference",
+                      ),
+                      Tab(
+                        text: "Coffee & Convo",
+                      ),
+                      Tab(
+                        text: "Entire Floor",
+                      )
+                    ]
+                  ),
+                  CoffeeCard(),
+                ],
+              ),
+            )
+          ],
+        )),
+    );
+  }
+}
+
+class CircleTabIndicator extends Decoration{
+  late final BoxPainter _painter;
+
+  // ignore: non_constant_identifier_names
+  CircleTabIndicator({required Color color, required double radius}):
+            _painter= _CirclePainter(color,radius);
+
+  
+  @override
+  BoxPainter createBoxPainter([ VoidCallback? onChanged]) => _painter;
+
+}
+
+class _CirclePainter extends BoxPainter{
+    late final Paint _paint;
+    late double radius;
+
+    _CirclePainter(Color color, this.radius): _paint = Paint()
+          ..color = color
+          ..isAntiAlias = true;
+
+    @override
+    void paint(Canvas canvas, Offset offset, ImageConfiguration configuration){
+          final Offset circleOffset = offset + Offset(configuration.size!.width / 2, configuration.size!.height - radius);
+          canvas.drawCircle(circleOffset, radius, _paint);
+    }
+}

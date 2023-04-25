@@ -5,7 +5,7 @@ import 'package:cafe_app/services/user_service.dart';
 import 'package:cafe_app/services/cart_service.dart';
 import 'package:cafe_app/services/api_response.dart';
 import 'package:cafe_app/api/apiFile.dart';
-import 'package:cafe_app/screens/login.dart';
+import 'package:cafe_app/screens/user/login.dart';
 import 'package:get/get.dart';
 
 class CartCard extends StatelessWidget {
