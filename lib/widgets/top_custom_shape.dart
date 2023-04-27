@@ -1,10 +1,13 @@
+import 'package:cafe_app/models/ProfileModel.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe_app/components/colors.dart';
 import 'package:cafe_app/components/size_config.dart';
 import 'package:cafe_app/components/custom_shape.dart';
 
 class TopCustomShape extends StatefulWidget {
-  const TopCustomShape({Key? key}) : super(key: key);
+  TopCustomShape({Key? key, required this.profileInfo,}) : super(key: key);
+
+  ProfileModel profileInfo;
 
   @override
   _TopCustomShapeState createState() => _TopCustomShapeState();
@@ -34,17 +37,18 @@ class _TopCustomShapeState extends State<TopCustomShape> {
                   width: 140.0,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2.0),
+                    border: Border.all(color: Colors.black, width: 0.0),
                     color: Colors.white,
                   ),
                   child: Image.asset(
-                    "assets/home/coffee.png",
-                    fit: BoxFit.contain,
+                    "assets/Images/user.png",
+                    fit: BoxFit.cover,
+                    
                   ),
                 ),
-                Text("Name Surname", style: TextStyle(fontSize: 22,color: Colors.white),),
+                Text("${widget.profileInfo.name}", style: TextStyle(fontSize: 22,color: Colors.white),),
                 SizedBox(height: 5,),//SizeConfig.screenHeight!/136.6,),              /// 5.0
-                Text("test@gmail.com", style: TextStyle(fontWeight: FontWeight.w400, color: Colors.white),)
+                Text("${widget.profileInfo.email}", style: TextStyle(fontWeight: FontWeight.w400, color: Colors.white),)
               ],
             ),
           )

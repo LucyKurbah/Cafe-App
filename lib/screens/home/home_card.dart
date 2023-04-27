@@ -77,7 +77,7 @@ class _HomeCardState extends State<HomeCard> {
     
     Expanded(
       child: Container(
-        height:MediaQuery.of(context).size.height *2,
+        height:MediaQuery.of(context).size.height * 2 ,
         // color: Colors.grey[800],
         padding: EdgeInsets.all(30),
         decoration: BoxDecoration(
@@ -90,7 +90,7 @@ class _HomeCardState extends State<HomeCard> {
         
         child: GridView.builder(
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          // physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, 
               crossAxisSpacing: 30.0,

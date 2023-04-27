@@ -21,18 +21,24 @@ Future<ApiResponse> getProfile() async{
                        'user_id': userId.toString(),
                     },   
                );
+              
     switch(response.statusCode)
     {
       case 200:
-        if(response.body =='305'){
+        if(response.body == '305'){
           apiResponse.data = '';
         }
         else if(response.body == 'X'){
   
           apiResponse.error = ApiConstants.notLoggedIn;
         }
+        else if(response.body == '500'){
+  
+          apiResponse.error = ApiConstants.notLoggedIn;
+        }
         else{
-          print(response.body);
+          print("here");
+          print(response.body.runtimeType);
             apiResponse.data =  jsonDecode(response.body).map((p) => ProfileModel.fromJson(p)).toList();
         } 
         break;
@@ -47,4 +53,53 @@ Future<ApiResponse> getProfile() async{
      apiResponse.error =e.toString();
   }
   return apiResponse;
+}
+
+Future<ApiResponse> saveProfileDetailsApiCall() async{
+  ApiResponse apiResponse = ApiResponse();
+  String token = await getToken();
+  return apiResponse;
+  // int userId = await getUserId();
+  // try {
+  //   final response = await http.post(Uri.parse(ApiConstants.saveProfileUrl),
+  //               headers: {
+  //                   'Accept' : 'application/json',
+  //                   'Authorization' : 'Bearer $token'
+  //               },
+  //               body:{
+  //                      'user_id': userId.toString(),
+  //                   },   
+  //              );
+              
+  //   switch(response.statusCode)
+  //   {
+  //     case 200:
+  //       if(response.body == '305'){
+  //         apiResponse.data = '';
+  //       }
+  //       else if(response.body == 'X'){
+  
+  //         apiResponse.error = ApiConstants.notLoggedIn;
+  //       }
+  //       else if(response.body == '500'){
+  
+  //         apiResponse.error = ApiConstants.notLoggedIn;
+  //       }
+  //       else{
+  //         print("here");
+  //         print(response.body.runtimeType);
+  //           apiResponse.data =  jsonDecode(response.body).map((p) => ProfileModel.fromJson(p)).toList();
+  //       } 
+  //       break;
+  //     case 401:
+  //       apiResponse.error = ApiConstants.unauthorized;
+  //       break;
+  //     default:
+  //        apiResponse.error = response.statusCode.toString();
+  //       break;
+  //   }
+  // } catch (e) {
+  //    apiResponse.error =e.toString();
+  // }
+  // return apiResponse;
 }

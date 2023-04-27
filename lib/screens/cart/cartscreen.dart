@@ -11,7 +11,6 @@ import 'package:cafe_app/screens/user/login.dart';
 import 'package:cafe_app/models/Cart.dart';
 import 'package:get/get.dart';
 import 'package:cafe_app/screens/home/components/cart_detailsview_card.dart';
-
 import '../../components/news_card_skelton.dart';
 
 class CartScreen extends StatefulWidget {
@@ -697,7 +696,7 @@ class _CartScreenState extends State<CartScreen> {
                 ElevatedButton(
                   onPressed: () {
                     // Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed("/cart");
+                    Navigator.of(context).pushNamed("/orders");
                   },
                   child: Text(
                     "OK",

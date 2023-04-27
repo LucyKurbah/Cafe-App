@@ -4,7 +4,7 @@ import 'package:cafe_app/components/size_config.dart';
 class UserSection extends StatelessWidget {
   IconData icon_name;
   String section_text;
-  UserSection({required this.icon_name, required this.section_text});
+UserSection({required this.icon_name, required this.section_text});
 
   @override
   Widget build(BuildContext context) {

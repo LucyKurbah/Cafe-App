@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
             icon: Icon(Icons.arrow_back), color: Colors.white,)
             ),
             SizedBox(
-              height: 100,
+              height: MediaQuery.of(context).size.height/100,
             ),
             Padding(
               padding: EdgeInsets.all(20.0),

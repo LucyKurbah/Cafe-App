@@ -44,7 +44,7 @@ class AddOnCard extends StatelessWidget {
         children: [
                     Container(
                       margin: const EdgeInsets.only(top: 10),
-                      height: 120,
+                      height: 90,
                       width: MediaQuery.of(context).size.width,
                       child:
                             Image.network(

@@ -29,7 +29,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
   String username ='';
   bool isLoggedIn = false;
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -38,11 +37,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
     super.initState();
   }
 
-
   void getUserDetail() async{
     
     ApiResponse response = await getUserDetails();
-     
     if(response.error == null){
       UserModel user = response.data as UserModel;
       username = user.name;
@@ -242,7 +239,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
   Scaffold buildHome(BuildContext context) {
     return Scaffold(
     backgroundColor: Colors.black,
- 
     body: SafeArea(
       child: SingleChildScrollView(
         child: ListView(
@@ -280,7 +276,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                            children: [
                              Center(
                                child: Badge(
-                                  badgeContent: Text('0', style: TextStyle(color: Colors.black)),
+                                  badgeContent: Text('', style: TextStyle(color: Colors.black)),
                                   badgeAnimation: BadgeAnimation.fade(),
                                   badgeStyle: BadgeStyle(
                                     badgeColor: Colors.black//Color(0xffE57734)
@@ -294,15 +290,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                     ),
                                ),
                              ),
-                              // IconButton(
-                              //   icon: Icon(Icons.login_outlined, size: 30,), 
-                              //   color: Colors.white,
-                              //   onPressed: () { 
-                              //     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (ctx) => Login()), (route) => false);
-                              //    },
-                              //   ),
-                              
-                              
                            ],
                          )                          
                       ),                   
@@ -356,21 +343,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
 
 class CircleTabIndicator extends Decoration{
   late final BoxPainter _painter;
-
-  // ignore: non_constant_identifier_names
-  CircleTabIndicator({required Color color, required double radius}):
-            _painter= _CirclePainter(color,radius);
-
-  
+  CircleTabIndicator({required Color color, required double radius}):_painter= _CirclePainter(color,radius);
   @override
   BoxPainter createBoxPainter([ VoidCallback? onChanged]) => _painter;
-
 }
 
 class _CirclePainter extends BoxPainter{
     late final Paint _paint;
     late double radius;
-
     _CirclePainter(Color color, this.radius): _paint = Paint()
           ..color = color
           ..isAntiAlias = true;
