@@ -56,6 +56,15 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs{
+        debug {
+            keyAlias 'androidUploadKeystore'
+            keyPassword 'admin@cafe123'
+            storeFile file('upload-keystore.jks')
+            storePassword 'admin@cafe123'
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -73,5 +82,6 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.firebase:firebase-analytics'
-    implementation platform('com.google.firebase:firebase-bom:31.2.1')
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
 }
+
