@@ -1,10 +1,14 @@
 import 'dart:ui';
+import 'package:flutter/material.dart';
 
-var registerColor = Color(0xFFffdfb4);
-var lightColor = Color(0xFFFFC971);
-var freeDelivery = Color(0xFF025939);
-var textColor = Color(0xFFf2ac29);
-var texthint = Color(0xFF666666);
-var passiveFavorite = Color(0xFFD9886A);
+var mainColor =  Colors.black;
+var greyColor = Colors.grey;
 var buttonColor = Color(0xFFFFFF);
+var textColor =  Colors.white;
+var iconColors1 = Color(0xffE57734);
+var iconColors3 = Color.fromARGB(255, 170, 238, 253);
+var iconColors2 = Color(0xFFffd28d);
+var signColor = Color(0xFFa9a29f);
+var titleColor = Color(0xFF5c524f);
+
 // var buttonColorNew = Color(0xFFFF9505);

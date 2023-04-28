@@ -14,6 +14,7 @@ class ApiConstants {
   static String logoutUrl = '$baseUrl/logout';
   static String userUrl = '$baseUrl/user';
   static String getProfileUrl = '$baseUrl/getProfile';
+  static String saveProfileUrl = '$baseUrl/saveProfile';
   static String itemUrl = '$baseUrl/getFoodItems';
   static String getAddOnUrl = '$baseUrl/getItems';
   static String tableUrl = '$baseUrl/getTables';

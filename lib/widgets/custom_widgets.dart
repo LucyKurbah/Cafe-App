@@ -1,8 +1,10 @@
+import 'package:cafe_app/components/colors.dart';
+import 'package:cafe_app/components/dimensions.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_cafe/getx/product_controller.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../../components/dimensions.dart';
 // import 'screens/list_cart_products.dart';
 
 showSnackBar(
@@ -81,6 +83,45 @@ vSpace(height) {
 hSpace(width) {
   return SizedBox(
     width: width.toDouble(),
+  );
+}
+
+// ignore: non_constant_identifier_names
+BigText(text, [color=Colors.white,size=20.0, overFlow = TextOverflow.ellipsis]){
+  return Text(
+    text, 
+    overflow: overFlow,
+    style: TextStyle(
+      color: color,
+      fontWeight: FontWeight.w400,
+      fontSize: Dimensions.font20
+    ),
+
+  );
+}
+
+SmallText(text, [color=Colors.white,size=15.0, overFlow = TextOverflow.ellipsis]){
+  return Text(
+    text, 
+    overflow: overFlow,
+    style: TextStyle(
+      color: color,
+      fontWeight: FontWeight.w400,
+      fontSize: size,
+      height: 1.2
+    ),
+
+  );
+}
+
+IconText(icon, iconColor, text)
+{
+  return Row(
+    children: [
+      Icon(icon,color:iconColor),
+      SizedBox(width: 5,),
+      SmallText(text,mainColor)
+    ],
   );
 }
 

@@ -1,10 +1,12 @@
 import 'package:badges/badges.dart';
+import 'package:cafe_app/components/colors.dart';
 import 'package:cafe_app/screens/cart/cartscreen.dart';
 import 'package:flutter/material.dart';
 import '../../components/responsive_utils.dart';
 import '../../models/user_model.dart';
 import '../../services/api_response.dart';
 import '../../widgets/custom_widgets.dart';
+import 'event_body.dart';
 import 'home_card.dart';
 import '../cart/cartscreen.dart';
 import '../user/login.dart';
@@ -70,21 +72,21 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
   Widget build(BuildContext context) {
     Size _screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      body: _webView(_screenSize, context),
+      body: _drawerView(_screenSize, context),
     );
     // buildHome(context);
   }
 
-  Widget _webView(Size _screenSize, BuildContext context) {
+  Widget _drawerView(Size _screenSize, BuildContext context) {
     return Stack(
     children: [
        Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.grey,
-               Colors.black,
-              Colors.black
+                greyColor,
+                mainColor,
+                mainColor
             ],
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter
@@ -103,16 +105,16 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                   children: [
                     CircleAvatar(
                       radius: 40.0,
-                      backgroundColor: Colors.white,
+                      backgroundColor: textColor,
                       child: Container(
                           child: Icon(
                             Icons.person,
                             size: 80,
-                            color: Colors.grey,
+                            color: greyColor,
                           ),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white,
+                            color: textColor,
                           ),
                         ),
                         
@@ -121,7 +123,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                     SizedBox(height: 10.0,),
                     Text(username,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: textColor,
                         fontSize: 20.0
                         ),
                     ),
@@ -136,8 +138,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                 //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Home()));
                                  Get.to(Home(), transition: Transition.rightToLeftWithFade);
                               },
-                              leading: Icon(Icons.home, color: Colors.white,),
-                              title: Text("Home", style: TextStyle(color: Colors.white),),
+                              leading: Icon(Icons.home, color: textColor,),
+                              title: Text("Home", style: TextStyle(color: textColor),),
                             ),
                             ListTile(
                               onTap: (){
@@ -146,11 +148,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                               },
                               leading: Icon(
                                 Icons.person, 
-                                color: Colors.white,),
+                                color: textColor,),
                               title: Text(
                                 "My Orders", 
                                 style: TextStyle(
-                                  color: Colors.white),),
+                                  color: textColor),),
                             ),
                             ListTile(
                               onTap: (){
@@ -159,11 +161,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                               },
                               leading: Icon(
                                 Icons.person, 
-                                color: Colors.white,),
+                                color: textColor,),
                               title: Text(
                                 "Profile", 
                                 style: TextStyle(
-                                  color: Colors.white),),
+                                  color: textColor),),
                             ),
                             // ListTile(
                             //   onTap: (){
@@ -172,20 +174,20 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                             //   },
                             //   leading: Icon(
                             //         Icons.settings, 
-                            //         color: Colors.white,),
+                            //         color: textColor,),
                             //   title: Text(
                             //             "Settings", 
                             //             style: TextStyle(
-                            //                 color: Colors.white),),
+                            //                 color: textColor),),
                             // ),
                             ListTile(
                             
                               leading: Icon(isLoggedIn?
                                     Icons.logout : Icons.login, 
-                                    color: Colors.white,),
+                                    color: textColor,),
                              
                               title: Text(isLoggedIn ? 'Logout' : 'Login/ Sign Up',  style: TextStyle(
-                                             color: Colors.white),),
+                                             color: textColor),),
                               onTap: () {
                                 if (isLoggedIn) {
                                   logout();
@@ -203,7 +205,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
         )
         ),
 
-        TweenAnimationBuilder(
+       TweenAnimationBuilder(
           tween: Tween<double>(begin: 0,end: value), 
           duration: Duration(milliseconds: 200), 
           curve: Curves.easeIn,
@@ -218,20 +220,20 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
             ));
           }
           ),
-          GestureDetector(
-            onHorizontalDragUpdate: (e){
-                         if (e.delta.dx >0) {
-                           setState(() {
-                             value = 1;
-                           });
-                         }
-                         else{
-                           setState(() {
-                             value = 0;
-                           });
-                         }
-                      },
-          )
+          // GestureDetector(
+          //   onHorizontalDragUpdate: (e){
+          //                if (e.delta.dx >0) {
+          //                  setState(() {
+          //                    value = 1;
+          //                  });
+          //                }
+          //                else{
+          //                  setState(() {
+          //                    value = 0;
+          //                  });
+          //                }
+          //             },
+          // )
     ],
   );
   }
@@ -260,7 +262,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                         child: 
                         GestureDetector(
                          
-                          child: Icon(Icons.menu,color: Colors.white, size: 40,),
+                          child: Icon(Icons.menu,color: textColor, size: 40,),
                           onTap: (() {
                             setState(() {
                               value == 0 ? value = 1 : value = 0;
@@ -283,7 +285,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                   ),
                                   child: IconButton(
                                     icon: Icon(Icons.shopping_bag_outlined, size: 30,), 
-                                    color: Colors.white,
+                                    color: textColor,
                                     onPressed: () { 
                                       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));
                                      },
@@ -295,39 +297,40 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                       ),                   
                     ],
                   ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(" App", 
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
+                  EventBody(),
+                  // SizedBox(
+                  //   height: 50,
+                  // ),
+                  // Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.center,
+                  //   children: [
+                  //     Align(
+                  //       alignment: Alignment.center,
+                  //       child: Text(" App", 
+                  //             style: TextStyle(
+                  //               color: textColor,
+                  //               fontSize: 30,
+                  //               fontWeight: FontWeight.bold,
                                 
-                              ),),
-                      ),
-                      SizedBox(
-                        height: 12,
-                      ),
-                       Align(
-                          alignment: Alignment.center,
-                          child: Text("Your needs", 
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
+                  //             ),),
+                  //     ),
+                  //     SizedBox(
+                  //       height: 12,
+                  //     ),
+                  //      Align(
+                  //         alignment: Alignment.center,
+                  //         child: Text("Your needs", 
+                  //             style: TextStyle(
+                  //               color: textColor,
+                  //               fontSize: 12,
                                
-                              ),),
-                       ),
-                        SizedBox(
-                        height: 50,
-                      ),
-                    ],
-                  ),
+                  //             ),),
+                  //      ),
+                  //       SizedBox(
+                  //       height: 50,
+                  //     ),
+                  //   ],
+                  // ),
                   HomeCard(),
                          
                 ],
