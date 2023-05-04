@@ -1,6 +1,9 @@
 import 'dart:math';
 
+import 'package:cafe_app/components/colors.dart';
+import 'package:cafe_app/components/dimensions.dart';
 import 'package:cafe_app/screens/home/home.dart';
+import 'package:cafe_app/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 
 import '../../constraints/constants.dart';
@@ -28,19 +31,37 @@ class OrderDetailsCard extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 18.0),
                     child: Row(
                       children: [
-                        Container(
-                          height: 110,
-                          width: 120,
-                          child:
-                                Image.network(
-                                   product.image,
-                                    fit: BoxFit.contain,
-                                    scale: 0.2,
-                                  )
+                        // Container(
+                        //   height: 110,
+                        //   width: 120,
+                        //   child:
+                        //         Image.network(
+                        //            product.image,
+                        //             fit: BoxFit.contain,
+                        //             scale: 0.2,
+                        //           )
+                        // ),
+                         InkWell(
+                                onTap: () {
+                                  
+                                },
+                                child: 
+                                Container(
+                                  // margin: const EdgeInsets.only(top: 10),
+                                  height: 110,
+                                  width: 120,
+                                  child:
+                                        Image.network(
+                                            product.image,
+                                            fit: BoxFit.contain,
+                                            scale: 0.2,
+                                          )
+                                      
+                                ),
                         ),
                         Container(
                           height: 100,
-                          width: MediaQuery.of(context).size.width/1.5,
+                          width: MediaQuery.of(context).size.width/2,
                           child: ListTile(
                               title: Column(
                                 children: [
@@ -48,16 +69,18 @@ class OrderDetailsCard extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     // crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(" ${product.item_name}", style: TextStyle(color: Colors.white),),
-                                      Text("₹ ${product.item_price}", style: TextStyle(color: Colors.white,fontSize: 15)),
+                                     // Text(" ${product.item_name}", style: TextStyle(color: Colors.white),),
+                                      BigText(" ${product.item_name}",textColor,Dimensions.font20),
+                                      BigText("₹ ${product.item_price}",textColor,Dimensions.font20),
+                                      //Text("₹ ${product.item_price}", style: TextStyle(color: Colors.white,fontSize: 15)),
                                     ],
                                   ),
                                   SizedBox(height: 10,),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                       Text("x ${product.quantity}", style: TextStyle(color: Colors.white),),
-                                      
+                                       //Text("x ${product.quantity}", style: TextStyle(color: Colors.white),),
+                                       SmallText("x ${product.quantity}",textColor,Dimensions.font17)
                                     ],
                                   ),
                                     SizedBox(height: 20,),

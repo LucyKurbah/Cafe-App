@@ -1,3 +1,5 @@
+import 'package:cafe_app/components/colors.dart';
+import 'package:cafe_app/components/dimensions.dart';
 import 'package:cafe_app/screens/orders/orders_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -93,15 +95,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(
-                              'Order Date: ${_orderList[0].order_date}',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                           
+                            BigText('Order Date: ${_orderList[0].order_date}',textColor,Dimensions.font20),
                             SizedBox(height: 10),
-                            Text(
-                              'Total Amount: ₹ ${_orderList[0].total}',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            BigText( 'Total Amount: ₹ ${_orderList[0].total}',textColor,Dimensions.font20),
+                           
                           ],
                         ),
                       ),

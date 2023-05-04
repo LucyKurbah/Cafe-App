@@ -14,7 +14,7 @@ class Order {
       id: json['id'],
       image: json['path_file'],
       item_id: json['item_id'], 
-      item_price: json['item_price'], 
+      item_price: double.parse(json['item_price']), 
       quantity: json['item_quantity'], 
       user_id: json['user_id'],
       total: double.parse(json['price']),
