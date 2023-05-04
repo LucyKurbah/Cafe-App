@@ -87,14 +87,14 @@ hSpace(width) {
 }
 
 // ignore: non_constant_identifier_names
-BigText(text, [color=Colors.white,size=20.0, overFlow = TextOverflow.ellipsis]){
+BigText(text, [color=Colors.white,size, overFlow = TextOverflow.ellipsis]){
   return Text(
     text, 
     overflow: overFlow,
     style: TextStyle(
       color: color,
       fontWeight: FontWeight.w400,
-      fontSize: Dimensions.font20
+      fontSize: size == 0.0?Dimensions.font20:size
     ),
 
   );
@@ -114,13 +114,13 @@ SmallText(text, [color=Colors.white,size=15.0, overFlow = TextOverflow.ellipsis]
   );
 }
 
-IconText(icon, iconColor, text)
+IconText(icon, iconColor, text, text_color)
 {
   return Row(
     children: [
-      Icon(icon,color:iconColor),
-      SizedBox(width: 5,),
-      SmallText(text,mainColor)
+      Icon(icon,color:iconColor, size: Dimensions.iconSize24,),
+      SizedBox(width: Dimensions.width10,),
+      SmallText(text,text_color)
     ],
   );
 }

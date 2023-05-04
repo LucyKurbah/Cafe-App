@@ -41,7 +41,7 @@ class _TopCustomShapeState extends State<TopCustomShape> {
                     color: Colors.white,
                   ),
                   child: Image.asset(
-                    "assets/Images/user.png",
+                    "Assets/Images/user.png",
                     fit: BoxFit.cover,
                     
                   ),

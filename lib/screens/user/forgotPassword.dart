@@ -15,7 +15,7 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordState extends State<ForgotPassword> {
  ForgotPasswordController forgotPasswordController = Get.put(ForgotPasswordController());
  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  bool loading = false;
+bool loading = false;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 
+import 'package:cafe_app/components/colors.dart';
 import 'package:flutter/material.dart';
 
 import '../constraints/constants.dart';
@@ -45,6 +46,10 @@ const ProfileSkelton({
             ),
           ],
         ),
+         const SizedBox(height: defaultPadding),
+        const Skeleton(width: 150),
+        const SizedBox(height: defaultPadding),
+        const Skeleton(width: 250,),
         
       ],
     );
@@ -81,7 +86,7 @@ class CircleSkeleton extends StatelessWidget {
       height: size,
       width: size,
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.15),
+        color: textColor.withOpacity(0.15),
         shape: BoxShape.circle,
       ),
     );

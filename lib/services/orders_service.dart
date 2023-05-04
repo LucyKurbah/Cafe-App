@@ -23,7 +23,6 @@ Future<ApiResponse> getOrders() async{
  try {
     String token = await getToken();
     int userId = await getUserId();
- 
     final response = await http.post(Uri.parse(ApiConstants.getOrdersUrl),
                 headers: {
                     'Accept' : 'application/json',
@@ -33,12 +32,11 @@ Future<ApiResponse> getOrders() async{
                        'user_id': userId.toString(),
                     },   
                );
-
     switch(response.statusCode)
     {
       
       case 200:
-      
+
         if(response.body =='305'){
           apiResponse.data = '';
         }
@@ -47,7 +45,6 @@ Future<ApiResponse> getOrders() async{
           apiResponse.error = ApiConstants.notLoggedIn;
         }
         else{
-          
           apiResponse.data =  jsonDecode(response.body).toList();
         } 
         break;
@@ -81,7 +78,7 @@ Future<ApiResponse> getOrdersDetails(order_id) async{
                        'order_id' : order_id.toString(),
                     },   
                );
-
+  print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:

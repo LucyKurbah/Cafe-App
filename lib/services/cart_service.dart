@@ -388,8 +388,10 @@ Future<ApiResponse> getTotal() async{
     switch(response.statusCode)
     {
       case 200:
-        apiResponse.data = (jsonDecode(response.body)) ;
-        
+        String responseString = (jsonDecode(response.body)) ;
+        double value = double.parse(responseString);
+        apiResponse.data = value;
+        print(apiResponse.data);
         break;
       case 401:
         apiResponse.error = ApiConstants.unauthorized;
@@ -455,7 +457,7 @@ Future<ApiResponse> makePayment() async {
                         'user_id': userId.toString(),
                     },   
                );
-
+   
     if (response.statusCode == 200) {
       if(response.body == "Y")
       {

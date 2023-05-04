@@ -29,6 +29,7 @@ class _ProfileState extends State<Profile> {
   File? _file;
   String? _fileName;
 
+
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
@@ -82,16 +83,27 @@ class _ProfileState extends State<Profile> {
     if (_file != null) {
       filePath = _file?.path;
     }
+    // Map<String, dynamic> otherDetails = {
+    //   'name': _nameController.text,
+    //   'email': _emailController.text,
+    //   'phone': _phoneController.text,
+    // };
 
-    Map<String, dynamic> otherDetails = {
-      'name': _nameController.text,
-      'email': _emailController.text,
-      'phone': _phoneController.text,
-    };
-
-   print(otherDetails['name']);
-    // final response = await saveProfileDetailsApiCall(filePath, otherDetails);
-
+    // final response = await saveProfileDetailsApiCall(filePath);
+    ApiResponse response  = await saveProfileDetailsApiCall(filePath); // call order service to get orders
+    if(response.error == null)
+    {
+       setState(() {
+          _isLoading = false;
+          showSnackBar(title: 'Document saved', message: '');
+      });
+    }
+    else{
+       setState(() {
+        _isLoading = true;
+        showSnackBar(title: '${response.error}', message: '');
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -120,74 +132,84 @@ class _ProfileState extends State<Profile> {
                           const SizedBox(height: 20),
                     )
                   : 
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TopCustomShape(profileInfo: _profileInfo[0]),
-                    SizedBox(height: 20,),
-                    Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                            Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TopCustomShape(profileInfo: _profileInfo[0]),
+                      SizedBox(height: 20,),
+                      Padding(
+                        padding: const EdgeInsets.all(30.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                       ReadOnlyTextField(
-                                        label: 'Name',
-                                        defaultText: _nameController.text,
-                                        // controller: _nameController
+                                          label: 'Name',
+                                          defaultText: _nameController.text,
+                                          enable: false,
+                                          // controller: _nameController,
+                                          // onChanged: (newValue) {
+                                          //   setState(() {
+                                          //     _nameController.text = newValue;
+                                          //   });
+                                          // },
+                                        ),
+                                        SizedBox(height: 20,),
+                                      ReadOnlyTextField(
+                                          label: 'Email',
+                                          defaultText: '${_profileInfo[0].email}',
+                                          enable : false,
+                                          // controller: _emailController
                                       ),
                                       SizedBox(height: 20,),
-                                    ReadOnlyTextField(
-                                        label: 'Email',
-                                        defaultText: '${_profileInfo[0].email}',
-                                        // controller: _emailController
-                                    ),
-                                    SizedBox(height: 20,),
-                                    ReadOnlyTextField(
-                                        label: 'Phone Number',
-                                        defaultText: '${_profileInfo[0].phone_no}',
-                                        //controller: _phoneController
-                                    ),
-                                    SizedBox(height: 16),
-                                    Text(
-                                      'Upload your ID (PDF/JPEG/JPG)',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Colors.white
+                                      ReadOnlyTextField(
+                                          label: 'Phone Number',
+                                          defaultText: '${_profileInfo[0].phone_no}',
+                                          enable: false,
+                                          //controller: _phoneController
                                       ),
-                                    ),
-                                    TextButton.icon(
-                                      onPressed: _pickFile,
-                                      icon: Icon(Icons.upload_file),
-                                      label: _file != null ? Text(_fileName ?? ''): Text('Select file'),
-                                    ),
-                                    SizedBox(height: 16),
-                                    ElevatedButton(
-                                      onPressed: _saveProfile,
-                                      child: Text('Save Profile'),
-                                    ),
-                                  ],
-                                ),
-                              )
-                           
-                           
-                        ],
-                      ),
-                    )
-                    
-
-                    //SizeConfig.screenHeight!/34.15,),                              /// 20.0
-                    // UserSection(icon_name: Icons.account_circle, section_text: "My information"),
-                    // UserSection(icon_name: Icons.credit_card, section_text: "Credit Card"),
-                    // UserSection(icon_name: Icons.shopping_basket, section_text: "Past orders"),
-                    // UserSection(icon_name: Icons.location_city, section_text: "Address information"),
-                    // UserSection(icon_name: Icons.wallet_giftcard, section_text: "Coupons"),
-                  ],
+                                      SizedBox(height: 16),
+                                      Text(
+                                        'Upload your ID (PDF/JPEG/JPG)',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Colors.white
+                                        ),
+                                      ),
+                                      TextButton.icon(
+                                        onPressed: _pickFile,
+                                        icon: Icon(Icons.upload_file),
+                                        label: _file != null ? Text(_fileName ?? ''): Text('Select file'),
+                                      ),
+                                      SizedBox(height: 16),
+                                      ElevatedButton(
+                                        onPressed: _saveProfile,
+                                        child: Text('Save Profile'),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                             
+                             
+                          ],
+                        ),
+                      )
+                      
+                
+                      //SizeConfig.screenHeight!/34.15,),                              /// 20.0
+                      // UserSection(icon_name: Icons.account_circle, section_text: "My information"),
+                      // UserSection(icon_name: Icons.credit_card, section_text: "Credit Card"),
+                      // UserSection(icon_name: Icons.shopping_basket, section_text: "Past orders"),
+                      // UserSection(icon_name: Icons.location_city, section_text: "Address information"),
+                      // UserSection(icon_name: Icons.wallet_giftcard, section_text: "Coupons"),
+                    ],
+                  ),
                 ),
     );
   }

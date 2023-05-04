@@ -367,33 +367,33 @@ class _MenuPageState extends State<MenuPage> with SingleTickerProviderStateMixin
                                         ),
                               ),
                               // Card Panel
-                              AnimatedPositioned(
-                                duration: const Duration(milliseconds: 500),
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height: controller.homeState == HomeState.normal
-                                    ? 100
-                                    : (constraints.maxHeight - 100),
-                                child: GestureDetector(
-                                  onVerticalDragUpdate: _onVerticalGesture,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(20),
+                              // AnimatedPositioned(
+                              //   duration: const Duration(milliseconds: 500),
+                              //   bottom: 0,
+                              //   left: 0,
+                              //   right: 0,
+                              //   height: controller.homeState == HomeState.normal
+                              //       ? 100
+                              //       : (constraints.maxHeight - 100),
+                              //   child: GestureDetector(
+                              //     onVerticalDragUpdate: _onVerticalGesture,
+                              //     child: Container(
+                              //       padding: const EdgeInsets.all(20),
                                   
-                                    decoration: const BoxDecoration(
-                                            color: Colors.white24,
-                                            borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
-                                    ),
-                                    alignment: Alignment.topLeft,
-                                    child: AnimatedSwitcher(
-                                      duration: const Duration(milliseconds: 500),
-                                      child: controller.homeState == HomeState.normal
-                                          ? CardShortView(controller: controller)
-                                          : CartDetailsView(controller: controller),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              //       decoration: const BoxDecoration(
+                              //               color: Colors.white24,
+                              //               borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                              //       ),
+                              //       alignment: Alignment.topLeft,
+                              //       child: AnimatedSwitcher(
+                              //         duration: const Duration(milliseconds: 500),
+                              //         child: controller.homeState == HomeState.normal
+                              //             ? CardShortView(controller: controller)
+                              //             : CartDetailsView(controller: controller),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           );
                         },

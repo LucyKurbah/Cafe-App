@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cafe_app/screens/menu/menu.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'controllers/home_controller.dart';
 import 'screens/table/table_page.dart';
 import 'screens/cart/cartscreen.dart';
@@ -59,6 +60,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState(){
     super.initState();
+    saveDeviceTokenIdToSharedPreferences();
     FirebaseMessaging.instance.getInitialMessage();
     //Foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -108,6 +110,15 @@ class _MyAppState extends State<MyApp> {
           });
       }
     });
+  }
+
+  Future<void> saveDeviceTokenIdToSharedPreferences() async {
+    final FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? deviceTokenId = await messaging.getToken();
+    print("DEVICE TOKEN ID IS");
+    print(deviceTokenId);
+    // final prefs = await SharedPreferences.getInstance();
+    // await prefs.setString('deviceTokenId', deviceTokenId!);
   }
 
   void _incrementCounter()

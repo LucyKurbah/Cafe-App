@@ -1,4 +1,5 @@
 import 'package:cafe_app/screens/user/login.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,13 +15,18 @@ import 'package:google_sign_in/google_sign_in.dart';
 class LoginController extends GetxController{
   TextEditingController  txtEmail = TextEditingController();
   TextEditingController  txtPassword = TextEditingController();
-                      
+  String? deviceTokenId;                     
   
   final Future<SharedPreferences> pref = SharedPreferences.getInstance();
 
   void loginUser() async{
     
-    ApiResponse response = await login(txtEmail.text, txtPassword.text);
+    final FirebaseMessaging messaging = FirebaseMessaging.instance;
+    deviceTokenId = await messaging.getToken();
+      print("DEVICE TOKEN ID IS");
+      print(deviceTokenId);
+    
+    ApiResponse response = await login(txtEmail.text, txtPassword.text, deviceTokenId!);
     if(response.error == null){
       _saveAndRedirectToHome(response.data as UserModel);
     }
@@ -30,6 +36,13 @@ class LoginController extends GetxController{
       // });
      showSnackBar(title: 'Error', message: '${response.error}');
     }
+  }
+
+  Future<void> saveDeviceTokenIdToSharedPreferences() async {
+    final FirebaseMessaging messaging = FirebaseMessaging.instance;
+    deviceTokenId = await messaging.getToken();
+   
+   
   }
 
   void signIn() async{

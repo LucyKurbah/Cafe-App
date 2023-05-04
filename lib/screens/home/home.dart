@@ -2,6 +2,7 @@ import 'package:badges/badges.dart';
 import 'package:cafe_app/components/colors.dart';
 import 'package:cafe_app/screens/cart/cartscreen.dart';
 import 'package:flutter/material.dart';
+import '../../components/dimensions.dart';
 import '../../components/responsive_utils.dart';
 import '../../models/user_model.dart';
 import '../../services/api_response.dart';
@@ -104,12 +105,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      radius: 40.0,
+                      radius: Dimensions.radius40,
                       backgroundColor: textColor,
                       child: Container(
                           child: Icon(
                             Icons.person,
-                            size: 80,
+                            size: Dimensions.iconSize80,
                             color: greyColor,
                           ),
                           decoration: BoxDecoration(
@@ -120,11 +121,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                         
                       // backgroundImage: Icon(Icons.person),
                     ),
-                    SizedBox(height: 10.0,),
+                    SizedBox(height: Dimensions.height10,),
                     Text(username,
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 20.0
+                        fontSize: Dimensions.font20
                         ),
                     ),
                   ],
@@ -136,7 +137,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                             ListTile(
                               onTap: (){
                                 //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Home()));
-                                 Get.to(Home(), transition: Transition.rightToLeftWithFade);
+                                //  Get.to(Home(), transition: Transition.rightToLeftWithFade);
+                                 Get.to(() => Home(), transition: Transition.rightToLeftWithFade);
                               },
                               leading: Icon(Icons.home, color: textColor,),
                               title: Text("Home", style: TextStyle(color: textColor),),
@@ -144,7 +146,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                             ListTile(
                               onTap: (){
                                 //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Profile()));
-                                  Get.to(MyOrders(), transition: Transition.rightToLeftWithFade);
+                                  // Get.to(MyOrders(), transition: Transition.rightToLeftWithFade);
+                                  Get.to(() => MyOrders(), transition: Transition.rightToLeftWithFade);
+                                  
                               },
                               leading: Icon(
                                 Icons.person, 
@@ -157,7 +161,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                             ListTile(
                               onTap: (){
                                 //  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>Profile()));
-                                  Get.to(Profile(), transition: Transition.rightToLeftWithFade);
+                                  //Get.to(Profile(), transition: Transition.rightToLeftWithFade);
+                                  Get.to(() => Profile(), transition: Transition.rightToLeftWithFade);
                               },
                               leading: Icon(
                                 Icons.person, 
@@ -246,7 +251,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
         child: ListView(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
-          padding: EdgeInsets.only(top: 20,),
+          padding: EdgeInsets.only(top: Dimensions.width20,),
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
@@ -262,7 +267,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                         child: 
                         GestureDetector(
                          
-                          child: Icon(Icons.menu,color: textColor, size: 40,),
+                          child: Icon(Icons.menu,color: textColor, size: Dimensions.iconSize40,),
                           onTap: (() {
                             setState(() {
                               value == 0 ? value = 1 : value = 0;
@@ -272,7 +277,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                        
                       ),
                       Container(
-                        padding: EdgeInsets.all(20),
+                        padding: EdgeInsets.all(Dimensions.width20),
                         child: 
                          Row(
                            children: [
@@ -284,7 +289,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin{
                                     badgeColor: Colors.black//Color(0xffE57734)
                                   ),
                                   child: IconButton(
-                                    icon: Icon(Icons.shopping_bag_outlined, size: 30,), 
+                                    icon: Icon(Icons.shopping_bag_outlined, size: Dimensions.iconSize30,), 
                                     color: textColor,
                                     onPressed: () { 
                                       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => CartScreen()));

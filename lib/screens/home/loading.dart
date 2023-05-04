@@ -3,6 +3,7 @@ import 'package:cafe_app/models/Orders.dart';
 import 'package:cafe_app/screens/add_on/addOn_page.dart';
 import 'package:cafe_app/screens/cart/cartscreen.dart';
 import 'package:cafe_app/screens/conference/conference_screen.dart';
+import 'package:cafe_app/screens/home/event_details.dart';
 import 'package:cafe_app/screens/user/login.dart';
 import 'package:cafe_app/screens/menu/menu.dart';
 import 'package:cafe_app/screens/orders/my_orders.dart';
@@ -53,7 +54,7 @@ void _loadUserInfo() async {
 
   @override
   void initState() {
-    Future.delayed(Duration(milliseconds: 1), () {
+    Future.delayed(Duration(milliseconds: 500), () {
         _loadUserInfo();
     });
     super.initState();

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,16 +10,22 @@ import '../screens/home/home.dart';
 
 class RegisterController extends GetxController{
 
-   TextEditingController  nameController = TextEditingController(),
+  String? deviceTokenId='';
+  TextEditingController  nameController = TextEditingController(),
                         emailController = TextEditingController(),
                         passwordController = TextEditingController(),
                         passwordConfirmController = TextEditingController();
   
   final Future<SharedPreferences> pref = SharedPreferences.getInstance();
 
+  Future<void> saveDeviceTokenIdToSharedPreferences() async {
+    final FirebaseMessaging messaging = FirebaseMessaging.instance;
+    deviceTokenId = await messaging.getToken();
+  }
+
   void registerUser() async{
-    
-    ApiResponse response = await register(nameController.text, emailController.text, passwordController.text);
+    saveDeviceTokenIdToSharedPreferences();
+    ApiResponse response = await register(nameController.text, emailController.text, passwordController.text, deviceTokenId!);
      
     if(response.error == null){
       _saveAndRedirectToHome(response.data as UserModel);

@@ -34,7 +34,9 @@ class _MyOrdersState extends State<MyOrders> {
   @override
   void dispose()
   {
-    controller.removeListener(onListenerController);
+     super.dispose();
+    // controller.removeListener(onListenerController);
+    controller.dispose();
   }
 
   @override
@@ -140,6 +142,7 @@ class _MyOrdersState extends State<MyOrders> {
   orders(product) {
     return GestureDetector(
       onTap: () {
+        // print(product['id']);
         Navigator.push(context, MaterialPageRoute(builder: ((context) => OrderDetails(order_id: product['id']))));
         },
         child: Opacity(

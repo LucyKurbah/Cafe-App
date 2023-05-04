@@ -58,7 +58,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
         newTime = TimeOfDay(hour: timeFrom!.hour, minute: timeFrom!.minute);
     }
     DateTime parsedTime =
-        DateFormat.jm().parse(newTime.format(context).toString());
+        DateFormat.Hm().parse(newTime.format(context).toString());
     // print(parsedTime);
     String formattedTime = DateFormat('h:mm a').format(parsedTime);
 
@@ -68,6 +68,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
       checkDateTimeAvailability(widget.table.id, _selectedtimeFrom.text, formattedTime);
     });
   }
+  
   convertTimeToPostgres(time,bookDate){
     DateTime date = DateFormat('yyyy-MM-dd').parse(bookDate);
     DateTime ptime = DateFormat.jm().parse(time);
@@ -75,7 +76,6 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
     return postgresDateTime.toString();
   }
 
-  
   Future<void> addCart(TableModel table, String totalPrice, String date, String timeFrom, String timeTo) async{
     userId = await getUserId();
     DateTime time_from = DateFormat('h:mm a').parse(timeFrom);
@@ -259,7 +259,7 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                                               if (timeFrom != null) {
                                                 try {
                                                   DateTime parsedTime =
-                                                      DateFormat.jm().parse(
+                                                      DateFormat.Hm().parse(
                                                           timeFrom!
                                                               .format(context)
                                                               .toString());
@@ -438,11 +438,11 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
               right: defaultPadding, left: defaultPadding),
           child: Center(
             child: Badge(
-              badgeStyle: BadgeStyle(badgeColor: Color(0xffe57734)),
+              badgeStyle: BadgeStyle(badgeColor: Colors.black),
               badgeContent: Consumer<HomeController>(
                 builder: (context, value, child) {
                   return Text(value.getCounter().toString(),
-                      style: TextStyle(color: Colors.white));
+                      style: TextStyle(color: Colors.black));
                 },
               ),
               child: IconButton(

@@ -11,8 +11,8 @@ import 'package:get/get.dart';
 import '../screens/home/home.dart';
 
 
-Future<ApiResponse> login(String email, String password) async {
-  
+Future<ApiResponse> login(String email, String password,String deviceTokenId) async {
+  print(email);
   ApiResponse apiResponse = ApiResponse();
   try {
     final response = await http.post(
@@ -20,12 +20,12 @@ Future<ApiResponse> login(String email, String password) async {
             headers: {'Accept': 'application/json',
                       'Content-type': 'application/json'
                       },
-            body: jsonEncode({"email": email, "password": password}),
+            body: jsonEncode({"email": email, "password": password, "device_token" : deviceTokenId}),
             )
-            .timeout(const Duration(seconds: 15), onTimeout: () {
+            .timeout(const Duration(seconds: 20), onTimeout: () {
               throw TimeoutException("Connection Time Out. Try Again!");
             },);
-
+    print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:
@@ -51,7 +51,7 @@ Future<ApiResponse> login(String email, String password) async {
   return apiResponse;
 }
 
-Future<ApiResponse> register(String name, String email, String password) async {
+Future<ApiResponse> register(String name, String email, String password, String deviceTokenId) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     final response = await http.post(
@@ -61,7 +61,8 @@ Future<ApiResponse> register(String name, String email, String password) async {
         'name': name, 
         'email': email, 
         'password' : password,
-        'password_confirmation' : password}
+        'password_confirmation' : password,
+        'device_token' : deviceTokenId}
     );
       
     switch(response.statusCode)
@@ -89,6 +90,7 @@ Future<ApiResponse> register(String name, String email, String password) async {
 
 Future<ApiResponse> forgotPassword(String email) async {
   ApiResponse apiResponse = ApiResponse();
+  print("object");
   try {
     final response = await http.post(
       Uri.parse(ApiConstants.forgotPasswordUrl),
@@ -97,7 +99,7 @@ Future<ApiResponse> forgotPassword(String email) async {
         'email': email, 
         }
     );
-      
+      print(response.statusCode);
     switch(response.statusCode)
     {
       case 200:

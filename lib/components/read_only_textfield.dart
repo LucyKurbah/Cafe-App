@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class ReadOnlyTextField extends StatelessWidget {
   final String label;
   final String defaultText;
+  final bool enable;
 
-  ReadOnlyTextField({required this.label, required this.defaultText});
+  ReadOnlyTextField({super.key, required this.label, required this.defaultText, this.enable=true});
 
   @override
   Widget build(BuildContext context) {
@@ -13,17 +14,25 @@ class ReadOnlyTextField extends StatelessWidget {
 
     return TextField(
       controller: controller,
-      // enabled: false,
+      enabled: enable,
        style: TextStyle(
                  color: Colors.white,
               ),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: Colors.white),
-        // border: OutlineInputBorder(
-        //          borderRadius: BorderRadius.circular(12),
-        // ),
+      
          border: OutlineInputBorder(
+          borderSide: BorderSide(
+          color: Colors.grey,
+          width: 1.0,
+        ),
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(8.0),
+        bottomRight: Radius.circular(8.0),
+      ),
+    ),
+    enabledBorder: OutlineInputBorder(
       borderSide: BorderSide(
         color: Colors.grey,
         width: 1.0,
@@ -33,7 +42,7 @@ class ReadOnlyTextField extends StatelessWidget {
         bottomRight: Radius.circular(8.0),
       ),
     ),
-    enabledBorder: OutlineInputBorder(
+    disabledBorder: OutlineInputBorder(
       borderSide: BorderSide(
         color: Colors.grey,
         width: 1.0,
